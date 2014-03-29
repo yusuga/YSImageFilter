@@ -1,0 +1,25 @@
+PODS:
+  - GPUImage (0.1.3)
+  - NYXImagesKit (2.3)
+  - YSProcessTimer (0.0.9)
+  - YSUIKitAdditions (0.0.8)
+
+DEPENDENCIES:
+  - GPUImage
+  - NYXImagesKit
+  - YSProcessTimer (from `https://github.com/yusuga/YSProcessTimer`)
+  - YSUIKitAdditions (from `https://github.com/yusuga/YSUIKitAdditions`)
+
+EXTERNAL SOURCES:
+  YSProcessTimer:
+    :git: https://github.com/yusuga/YSProcessTimer
+  YSUIKitAdditions:
+    :git: https://github.com/yusuga/YSUIKitAdditions
+
+SPEC CHECKSUMS:
+  GPUImage: efcc16efc1fc45c8f2fdc50591f3505d100789de
+  NYXImagesKit: bdcd82ed61e55ad95a2e95675c2f6b84f039c423
+  YSProcessTimer: 460c8648e5c5a3dac44d090fd938436d938ab5d7
+  YSUIKitAdditions: 1d15576e0c7d90bc74444132fd75e8944184f2b6
+
+COCOAPODS: 0.29.0
