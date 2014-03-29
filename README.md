@@ -1,18 +1,26 @@
-YSImageFilter
-===
+#YSImageFilter
+
 CoreImage wrapper.
 
-Example - TestUIImageFilters
-===
+#Example - TestUIImageFilters
+
 Simple drawing CoreGraphics vs [NYXImagesKit](https://github.com/Nyx0uf/NYXImagesKit) vs  vs [GPUImage](https://github.com/BradLarson/GPUImage) vs CoreImage
 
-Benchmark - Resize
-----------------
-100 trials
+##Benchmark - Resize
+
+###1000x1000px -> 50x50px
+
+CoreGraphics(Low) <<< CoreImage < GPUImage < NYXImagesKit = CoreGraphics(High)
+
+###1000x1000px -> 300x300px
+
+CoreGraphics(Low) << GPUImage < CoreImage < NYXImagesKit = CoreGraphics(High)
+
+###100 trials
 
 **[iPhone4 - iOS7.0]**
 
-||1000x1000px -> 50x50|1000x1000px -> 300x300px|
+||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
 |:---|:---|:---|
 |CoreGraphics(None)|0.003905 (256 FPS)|0.042514 (23 FPS)|
 |CoreGraphics(Low)|	0.003729 (268 FPS)|0.082422 (12 FPS)|
@@ -24,7 +32,7 @@ Benchmark - Resize
 
 **[iPhone4s - iOS7.0]**
 
-||1000x1000px -> 50x50|1000x1000px -> 300x300px|
+||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
 |:---|:---|:---|
 |CoreGraphics(None)|0.001483 (674 FPS)|0.023242 (43 FPS)|
 |CoreGraphics(Low)|0.001498 (667 FPS)|0.030422 (32 FPS)|
@@ -37,7 +45,7 @@ Benchmark - Resize
 
 **[iPhone5 - iOS7.0]**
 
-||1000x1000px -> 50x50|1000x1000px -> 300x300px|
+||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
 |:---|:---|:---|
 |CoreGraphics(None)|0.000708 (1412 FPS)|0.007247 (137 FPS)|
 |CoreGraphics(Low)|0.000605 (1652 FPS)|0.023104 (43 FPS)|
@@ -49,7 +57,7 @@ Benchmark - Resize
 
 **[iPhone5s - iOS7.1]**
 
-||1000x1000px -> 50x50|1000x1000px -> 300x300px|
+||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
 |:---|:---|:---|
 |CoreGraphics(None)|0.000392 (2548 FPS)|0.005476 (182 FPS)|
 |CoreGraphics(Low)|0.000386 (2591 FPS)|0.008912 (112 FPS)|
@@ -59,9 +67,11 @@ Benchmark - Resize
 |CoreImage(CPU)|0.005921 (168 FPS)|0.012817 (78 FPS)|
 |CoreImage(GPU)|0.006170 (162 FPS)|0.016473 (60 FPS)|
 
-Benchmark - Sepia
-----------------
-100 trials
+##Benchmark - Sepia
+
+GPUImage <<< NYXImagesKit(CoreImage)
+
+###100 trials
 
 **[iPhone4 - iOS7.0]**
 
