@@ -14,7 +14,7 @@ CoreGraphics(Low) <<< CoreImage < GPUImage < NYXImagesKit = CoreGraphics(High)
 
 ###1000x1000px -> 300x300px
 
-CoreGraphics(Low) << GPUImage < CoreImage < NYXImagesKit = CoreGraphics(High)
+CoreGraphics(Low) < GPUImage < CoreImage < NYXImagesKit = CoreGraphics(High)
 
 ###100 trials
 
