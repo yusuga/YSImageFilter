@@ -42,6 +42,10 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     [self resizeSquareWithProcess:^BOOL(UIImage *image, CGSize size) {
         return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationLow];
     }];
+    
+    [self resizeSquareWithProcess:^BOOL(UIImage *image, CGSize size) {
+        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationMedium];
+    }];
 
     [self resizeSquareWithProcess:^BOOL(UIImage *image, CGSize size) {
         return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationHigh];
@@ -57,6 +61,10 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     [self resizeRectangle4to3WithProcess:^BOOL(UIImage *image, CGSize size) {
         return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationLow];
     }];
+    
+    [self resizeRectangle4to3WithProcess:^BOOL(UIImage *image, CGSize size) {
+        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationMedium];
+    }];
 
     [self resizeRectangle4to3WithProcess:^BOOL(UIImage *image, CGSize size) {
         return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationHigh];
@@ -71,6 +79,10 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     
     [self resizeRectangle3to4WithProcess:^BOOL(UIImage *image, CGSize size) {
         return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationLow];
+    }];
+    
+    [self resizeRectangle3to4WithProcess:^BOOL(UIImage *image, CGSize size) {
+        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationMedium];
     }];
 
     [self resizeRectangle3to4WithProcess:^BOOL(UIImage *image, CGSize size) {
@@ -162,7 +174,7 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 - (BOOL)resizeInCoreGraphicsWithImage:(UIImage*)image size:(CGSize)size quality:(CGInterpolationQuality)quality
 {
     if (![self validateResizedImageWithSourceImage:image resizeSize:size process:^UIImage *(UIImage *sourceImage, CGSize resizeSize, BOOL trimToFit) {
-        return [ImageFilter resizeInCoreGraphicsWithImage:sourceImage size:size quality:quality trimToFit:trimToFit];
+        return [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit];
     }]) {
         return NO;
     }
@@ -192,7 +204,7 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 - (BOOL)resizeInCoreImageWithImage:(UIImage*)image size:(CGSize)size useGPU:(BOOL)useGPU
 {
     if (![self validateResizedImageWithSourceImage:image resizeSize:size process:^UIImage *(UIImage *sourceImage, CGSize resizeSize, BOOL trimToFit) {
-        return [YSImageFilter resizeWithImage:sourceImage size:resizeSize useGPU:useGPU trimToFit:trimToFit];
+        return [ImageFilter resizeInCoreImageWithImage:sourceImage size:resizeSize useGPU:useGPU trimToFit:trimToFit];
     }]) {
         return NO;
     }

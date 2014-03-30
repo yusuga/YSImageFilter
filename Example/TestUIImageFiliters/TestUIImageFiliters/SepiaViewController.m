@@ -31,10 +31,10 @@ typedef NS_ENUM(NSUInteger, Row) {
     if (!self.isViewLoaded) {
         [self performSelector:@selector(view)];
     }
-    self.sourceImage = [YSImageFilter resizeWithImage:self.sourceImage
-                                                 size:targetImageView.bounds.size
-                                               useGPU:YES
-                                            trimToFit:YES];
+    self.sourceImage = [ImageFilter resizeInCoreImageWithImage:self.sourceImage
+                                                          size:targetImageView.bounds.size
+                                                        useGPU:YES
+                                                     trimToFit:YES];
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -56,7 +56,7 @@ typedef NS_ENUM(NSUInteger, Row) {
         case RowSepiaCoreImage:
             processName = @"sepia CoreImage";
             setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
-                return [YSImageFilter sepiaWithImage:sourceImage intensity:0.5f useGPU:YES];
+                return [ImageFilter sepiaInCoreImageWithImage:sourceImage intensity:0.5f useGPU:YES];
             };
             break;
         case RowSepiaNYXImagesKit:

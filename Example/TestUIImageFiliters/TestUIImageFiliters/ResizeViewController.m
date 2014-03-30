@@ -107,7 +107,7 @@ typedef NS_ENUM(NSUInteger, Row) {
             }
             processName = [NSString stringWithFormat:@"set CoreGraphics(%@)", qualityStr];
             setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
-                return [ImageFilter resizeInCoreGraphicsWithImage:sourceImage size:size quality:quality trimToFit:trimToFit];
+                return [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit];
             };
         }
             break;
@@ -133,7 +133,7 @@ typedef NS_ENUM(NSUInteger, Row) {
             BOOL useGPU = indexPath.row == RowResizeCoreImageGPU ? YES : NO;
             processName = [NSString stringWithFormat:@"set CoreImage(%@)", useGPU ? @"GPU" : @"CPU"];
             setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
-                return [YSImageFilter resizeWithImage:sourceImage size:size useGPU:useGPU trimToFit:trimToFit];
+                return [ImageFilter resizeInCoreImageWithImage:sourceImage size:size useGPU:useGPU trimToFit:trimToFit];
             };
             break;
         }

@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "Utility.h"
 #import <YSProcessTimer/YSProcessTimer.h>
+#import <NSRunLoop-PerformBlock/NSRunLoop+PerformBlock.h>
 
 #import "YSImageFilter.h"
 #import "ImageFilter.h"
@@ -51,13 +52,49 @@
     [self allAverageWithImage:[Utility imageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(50.f, 50.f) trimToFit:YES];
 }
 
+#pragma mark - cpu busy
+
+- (void)testCPUBusy
+{
+    [self enumeratePrimeInBackground:10];
+    [NSThread sleepForTimeInterval:3.0];
+    [self testAllAverageTrimToFitWithImage1000x1000To50x50];
+}
+
+- (void)enumeratePrimeInBackground:(NSUInteger)threadNum
+{
+    for (NSUInteger thread = 0; thread < threadNum; thread++) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            for (NSUInteger i = 2; i < NSUIntegerMax; i++) {
+                BOOL isPrime = [self searchPrime:i];
+                if (isPrime) {
+//                    NSLog(@"prime %@", @(i));
+                }
+            }
+        });
+    }
+}
+
+- (BOOL)searchPrime:(NSUInteger)num
+{
+    for(NSUInteger i = 2; i*i <= num; i++){
+        if(num%i == 0){
+            return NO;
+        }
+    }
+    return YES;
+}
+
+#pragma mark - average
+
 - (void)allAverageWithImage:(UIImage*)sourceImage resizeSize:(CGSize)resizeSize trimToFit:(BOOL)trimToFit
 {
     /* Idling */
     // CoreGraphics
-    [ImageFilter resizeInCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationNone trimToFit:trimToFit];
-    [ImageFilter resizeInCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationLow trimToFit:trimToFit];
-    [ImageFilter resizeInCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationHigh trimToFit:trimToFit];
+    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationNone trimToFit:trimToFit];
+    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationLow trimToFit:trimToFit];
+    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationMedium trimToFit:trimToFit];
+    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationHigh trimToFit:trimToFit];
     
     // NYXImagesKit
     [ImageFilter resizeInNYXImagesKitWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
@@ -66,10 +103,12 @@
     [ImageFilter resizeInGPUImageWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
     
     // CoreImage
-    [YSImageFilter resizeWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
+    [ImageFilter resizeInCoreImageWithImage:sourceImage size:resizeSize useGPU:NO trimToFit:trimToFit];
+    [ImageFilter resizeInCoreImageWithImage:sourceImage size:resizeSize useGPU:YES trimToFit:trimToFit];
     
     NSTimeInterval coreGraphicsTimeNone = [self averageCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationNone trimToFit:trimToFit];
     NSTimeInterval coreGraphicsTimeLow = [self averageCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationLow trimToFit:trimToFit];
+    NSTimeInterval coreGraphicsTimeMedium = [self averageCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationMedium trimToFit:trimToFit];
     NSTimeInterval coreGraphicsTimeHigh = [self averageCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationHigh trimToFit:trimToFit];
     NSTimeInterval NYXImagesKitTime = [self averageNYXImagesKitWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
     NSTimeInterval GPUImageTime = [self averageGPUImageWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
@@ -80,6 +119,7 @@
 sourceImage.size: %@, resizeSize: %@, trimToFit: %@, numberOfTrials: %@\n\
 CoreGraphics(None) %f (%@ FPS)\n\
 CoreGraphics(Low) %f (%@ FPS)\n\
+CoreGraphics(Mid) %f (%@ FPS)\n\
 CoreGraphics(High) %f (%@ FPS)\n\
 NYXImagesKit %f (%@ FPS)\n\
 GPUImage %f (%@ FPS)\n\
@@ -93,6 +133,8 @@ CoreImage(GPU) %f (%@ FPS)\n\n",
           @(((int)(1/coreGraphicsTimeNone))),
           coreGraphicsTimeLow,
           @(((int)(1/coreGraphicsTimeLow))),
+          coreGraphicsTimeMedium,
+          @(((int)(1/coreGraphicsTimeMedium))),
           coreGraphicsTimeHigh,
           @(((int)(1/coreGraphicsTimeHigh))),
           NYXImagesKitTime,
@@ -132,7 +174,7 @@ CoreImage(GPU) %f (%@ FPS)\n\n",
     }
     NSString *name = [NSString stringWithFormat:@"average CoreGraphics(%@), resize: %@", qualityStr, NSStringFromCGSize(size)];
     return [YSProcessTimer startAverageWithProcessName:name numberOfTrials:kNumberOfTrials process:^{
-        [ImageFilter resizeInCoreGraphicsWithImage:image size:size quality:quality trimToFit:trimToFit];
+        [YSImageFilter resizeWithImage:image size:size quality:quality trimToFit:trimToFit];
     }];
 }
 
@@ -153,7 +195,7 @@ CoreImage(GPU) %f (%@ FPS)\n\n",
 - (NSTimeInterval)averageCoreImageWithImage:(UIImage*)image size:(CGSize)size useGPU:(BOOL)useGPU trimToFit:(BOOL)trimToFit
 {
     return [YSProcessTimer startAverageWithProcessName:@"average GPUImage" numberOfTrials:kNumberOfTrials process:^{
-        [YSImageFilter resizeWithImage:image size:size useGPU:useGPU trimToFit:trimToFit];
+        [ImageFilter resizeInCoreImageWithImage:image size:size useGPU:useGPU trimToFit:trimToFit];
     }];
 }
 

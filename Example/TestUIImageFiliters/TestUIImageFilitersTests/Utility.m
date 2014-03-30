@@ -8,7 +8,7 @@
 
 #import "Utility.h"
 #import <YSUIKitAdditions/UIImage+YSUIKitAdditions.h>
-#import "YSImageFilter.h"
+#import "ImageFilter.h"
 
 NSUInteger const kNumberOfTrials = 100;
 
@@ -27,7 +27,7 @@ NSUInteger const kNumberOfTrials = 100;
         s_image = [UIImage imageNamed:@"cat"];
         NSAssert(s_image != nil, nil);
         CGSize size = CGSizeMake(500.f, 500.f);
-        s_image = [YSImageFilter resizeWithImage:s_image size:size useGPU:YES trimToFit:YES];
+        s_image = [ImageFilter resizeInCoreImageWithImage:s_image size:size useGPU:YES trimToFit:YES];
         NSAssert2(CGSizeEqualToSize(size, s_image.size), @"size: %@, s_image.size: %@", NSStringFromCGSize(size), NSStringFromCGSize(s_image.size));
     });
     return s_image;
@@ -41,7 +41,7 @@ NSUInteger const kNumberOfTrials = 100;
         s_image = [UIImage imageNamed:@"cat"];
         NSAssert(s_image != nil, nil);
         CGSize size = CGSizeMake(50.f, 50.f);
-        s_image = [YSImageFilter resizeWithImage:s_image size:size useGPU:YES trimToFit:YES];
+        s_image = [ImageFilter resizeInCoreImageWithImage:s_image size:size useGPU:YES trimToFit:YES];
         NSAssert2(CGSizeEqualToSize(size, s_image.size), @"size: %@, s_image.size: %@", NSStringFromCGSize(size), NSStringFromCGSize(s_image.size));
     });
     return s_image;

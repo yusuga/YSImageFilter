@@ -32,8 +32,8 @@
 {
     /* Idling */
     // CoreImage
-    [YSImageFilter sepiaWithImage:sourceImage intensity:1.f useGPU:NO];
-    [YSImageFilter sepiaWithImage:sourceImage intensity:1.f useGPU:YES];
+    [ImageFilter sepiaInCoreImageWithImage:sourceImage intensity:1.f useGPU:NO];
+    [ImageFilter sepiaInCoreImageWithImage:sourceImage intensity:1.f useGPU:YES];
     
     // NYXImagesKit
     [ImageFilter sepiaInNYXImagesKitWithImage:sourceImage];
@@ -73,7 +73,7 @@ GPUImage %f (%@ FPS)\n\n",
 {
     NSString *name = [NSString stringWithFormat:@"average CoreImage(%@)", useGPU ? @"GPU" : @"CPU"];
     return [YSProcessTimer startAverageWithProcessName:name numberOfTrials:kNumberOfTrials process:^{
-        [YSImageFilter sepiaWithImage:image intensity:intensity useGPU:useGPU];
+        [ImageFilter sepiaInCoreImageWithImage:image intensity:intensity useGPU:useGPU];
     }];
 }
 

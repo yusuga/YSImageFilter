@@ -12,23 +12,17 @@
 
 /* Resize */
 
-+ (UIImage*)resizeWithImage:(UIImage*)image
-                       size:(CGSize)targetSize
-                  trimToFit:(BOOL)trimToFit;
-
-+ (UIImage*)resizeWithImage:(UIImage*)image
-                       size:(CGSize)targetSize
-                     useGPU:(BOOL)useGPU
-                  trimToFit:(BOOL)trimToFit;
-
 + (UIImage*)fastResizeWithImage:(UIImage*)image
                            size:(CGSize)newSize
                       trimToFit:(BOOL)trimToFit;
 
-/* Sepia */
++ (UIImage*)highQualityResizeWithImage:(UIImage*)image
+                                  size:(CGSize)newSize
+                             trimToFit:(BOOL)trimToFit;
 
-+ (UIImage *)sepiaWithImage:(UIImage *)image
-                  intensity:(CGFloat)intensity
-                     useGPU:(BOOL)useGPU;
++ (UIImage*)resizeWithImage:(UIImage*)sourceImage
+                       size:(CGSize)targetSize
+                    quality:(CGInterpolationQuality)quality
+                  trimToFit:(BOOL)trimToFit;
 
 @end

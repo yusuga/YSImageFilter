@@ -20,72 +20,44 @@
     #define LOG_IMAGE_FILTER(...)
 #endif
 
-@implementation ImageFilter
-
-+ (UIImage*)resizeInCoreGraphicsWithImage:(UIImage*)image
-                                     size:(CGSize)targetSize
-                              quality:(CGInterpolationQuality)quality
-                                trimToFit:(BOOL)trimToFit
-{
-    CGSize sourceImgSize = image.size;
-    LOG_IMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImgSize));
-    if (sourceImgSize.height < 1 || sourceImgSize.width < 1 ||
-        targetSize.height < 1 || targetSize.width < 1) {
-        return nil;
-    }
-
-    CGFloat aspectRatio = sourceImgSize.width / sourceImgSize.height;
-    CGFloat targetAspectRatio = targetSize.width / targetSize.height;
-    CGRect projectTo = CGRectZero;
-    CGSize newSize = targetSize;
-    if (trimToFit) {
-        // Scale and clip image so that the aspect ratio is preserved and the
-        // target size is filled.
-        if (targetAspectRatio < aspectRatio) {
-            // clip the x-axis.
-            projectTo.size.width = targetSize.height * aspectRatio;
-            projectTo.size.height = targetSize.height;
-            projectTo.origin.x = (targetSize.width - projectTo.size.width) / 2;
-            projectTo.origin.y = 0;
-        } else {
-            // clip the y-axis.
-            projectTo.size.width = targetSize.width;
-            projectTo.size.height = targetSize.width / aspectRatio;
-            projectTo.origin.x = 0;
-            projectTo.origin.y = (targetSize.height - projectTo.size.height) / 2;
-        }
-    } else {
-        // Scale image to ensure it fits inside the specified targetSize.
-        if (targetAspectRatio < aspectRatio) {
-            // target is less wide than the original.
-            projectTo.size.width = newSize.width;
-            projectTo.size.height = projectTo.size.width / aspectRatio;
-            newSize = projectTo.size;
-        } else {
-            // target is wider than the original.
-            projectTo.size.height = newSize.height;
-            projectTo.size.width = projectTo.size.height * aspectRatio;
-            newSize = projectTo.size;
-        }
-    } // if (clip)
-    LOG_IMAGE_FILTER(@"before CGRectIntegral(projectTo); projectTo: %@", NSStringFromCGRect(projectTo));
-    projectTo = CGRectIntegral(projectTo);
-    LOG_IMAGE_FILTER(@"after CGRectIntegral(projectTo); projectTo: %@", NSStringFromCGRect(projectTo));
-    // There's no CGSizeIntegral, so we fake our own.
-    CGRect integralRect = CGRectZero;
-    integralRect.size = newSize;
-    newSize = CGRectIntegral(integralRect).size;
-    LOG_IMAGE_FILTER(@"newSize: %@", NSStringFromCGSize(newSize));
-    
-    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.f);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetInterpolationQuality(context, quality);
-    [image drawInRect:projectTo];
-    UIImage* resizedImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    LOG_IMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
-    return resizedImage;
+static inline CGFLOAT_TYPE CGFloat_round(CGFLOAT_TYPE cgfloat) {
+#if defined(__LP64__) && __LP64__
+    return round(cgfloat);
+#else
+    return roundf(cgfloat);
+#endif
 }
+
+static inline CIContext *contextUsedGPU()
+{
+    static CIContext *s_context;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_context = [CIContext contextWithOptions:@{kCIContextUseSoftwareRenderer : @NO}];
+    });
+    return s_context;
+}
+
+static inline CIContext *contextUsedCPU()
+{
+    static CIContext *s_context;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_context = [CIContext contextWithOptions:nil];
+    });
+    return s_context;
+}
+
+static inline UIImage *imageFromCIImage(CIImage *ciImage, CGFloat imageScale, BOOL useGPU)
+{
+    CIContext *context = useGPU ? contextUsedGPU() : contextUsedCPU();
+    CGImageRef imageRef = [context createCGImage:ciImage fromRect:ciImage.extent];
+    UIImage *image  = [UIImage imageWithCGImage:imageRef scale:imageScale orientation:UIImageOrientationUp];
+    CGImageRelease(imageRef);
+    return image;
+}
+
+@implementation ImageFilter
 
 + (UIImage*)resizeInNYXImagesKitWithImage:(UIImage*)image
                                      size:(CGSize)targetSize
@@ -113,6 +85,91 @@
         resizedImage = [image scaleToFitSize:targetSize];
     }
     LOG_IMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
+    return resizedImage;
+}
+
++ (UIImage*)resizeInCoreImageWithImage:(UIImage*)image
+                                  size:(CGSize)targetSize
+                                useGPU:(BOOL)useGPU
+                             trimToFit:(BOOL)trimToFit
+{
+    CIImage *ciImage = [[CIImage alloc] initWithCGImage:image.CGImage];
+    CGSize imageSize = ciImage.extent.size;
+    if (imageSize.height < 1 || imageSize.width < 1 ||
+        targetSize.height < 1 || targetSize.width < 1) {
+        NSLog(@"Error: %s", __func__);
+        return nil;
+    }
+    
+    CGFloat imageScale = image.scale;
+    CGFloat aspectRatio = imageSize.width / imageSize.height;
+    CGFloat targetAspectRatio = targetSize.width / targetSize.height;
+    CGRect projectTo = CGRectZero;
+    CGSize newSize;
+    CIImage *resizedCiImage;
+    LOG_IMAGE_FILTER(@"imageSize: %@\nimageScale: %f\ntargetSize: %@\naspectRatio: %f\ntargetAspectRatio: %f", NSStringFromCGSize(imageSize), imageScale, NSStringFromCGSize(targetSize), aspectRatio, targetAspectRatio);
+    if (trimToFit) {
+        CGFloat ratio;
+        
+        if (targetAspectRatio < aspectRatio) {
+            LOG_IMAGE_FILTER(@"clip the x-axis");
+            ratio = imageSize.height / targetSize.height;
+        } else {
+            LOG_IMAGE_FILTER(@"clip the y-axis");
+            ratio = imageSize.width / targetSize.width;
+        }
+        newSize = CGSizeMake(targetSize.width * ratio,
+                             targetSize.height * ratio);
+        
+        LOG_IMAGE_FILTER(@"ratio: %f, newSize: %@", ratio, NSStringFromCGSize(newSize));
+        newSize = CGRectIntegral(CGRectMake(0.f, 0.f, newSize.width, newSize.height)).size;
+        
+        projectTo = CGRectMake(imageSize.width/2.f - newSize.width/2.f,
+                               imageSize.height/2.f - newSize.height/2.f,
+                               newSize.width,
+                               newSize.height);
+        
+        LOG_IMAGE_FILTER(@"before CGRectIntegral(projectTo) %@", NSStringFromCGRect(projectTo));
+        projectTo = CGRectIntegral(projectTo);
+        LOG_IMAGE_FILTER(@"after CGRectIntegral(projectTo) %@", NSStringFromCGRect(projectTo));
+        resizedCiImage = [ciImage imageByCroppingToRect:projectTo];
+        LOG_IMAGE_FILTER(@"croped center ciImage %@", NSStringFromCGRect(resizedCiImage.extent));
+        resizedCiImage = [resizedCiImage imageByApplyingTransform:CGAffineTransformMakeScale((1.f / ratio) * imageScale,
+                                                                                             (1.f / ratio) * imageScale)];
+        LOG_IMAGE_FILTER(@"resized ciImage  %@", NSStringFromCGRect(resizedCiImage.extent));
+    } else {
+        if (targetAspectRatio < aspectRatio) {
+            LOG_IMAGE_FILTER(@"clip the x-axis");
+            newSize = CGSizeMake(targetSize.width * imageScale,
+                                 targetSize.width / aspectRatio * imageScale);
+        } else {
+            LOG_IMAGE_FILTER(@"clip the y-axis");
+            newSize = CGSizeMake(targetSize.height * aspectRatio * imageScale,
+                                 targetSize.height * imageScale);
+        }
+        LOG_IMAGE_FILTER(@"before CGRectIntegral(newsize) %@", NSStringFromCGSize(newSize));
+        CGRect integralRect = CGRectZero;
+        integralRect.size = newSize;
+        newSize = CGRectIntegral(integralRect).size;
+        LOG_IMAGE_FILTER(@"after CGRectIntegral(newsize) %@", NSStringFromCGSize(newSize));
+        LOG_IMAGE_FILTER(@"newSize: %@", NSStringFromCGSize(newSize));
+        CGPoint scale = CGPointMake(newSize.width/imageSize.width,
+                                    newSize.height/imageSize.height);
+        LOG_IMAGE_FILTER(@"resize scale %@", NSStringFromCGPoint(scale));
+        resizedCiImage = [ciImage imageByApplyingTransform:CGAffineTransformMakeScale(scale.x, scale.y)];
+        LOG_IMAGE_FILTER(@"resized ciImage %@", NSStringFromCGRect(resizedCiImage.extent));
+    }
+    CGRect cropRect = resizedCiImage.extent;
+    cropRect = CGRectMake(CGFloat_round(cropRect.origin.x),
+                          CGFloat_round(cropRect.origin.y),
+                          CGFloat_round(cropRect.size.width),
+                          CGFloat_round(cropRect.size.height));
+    LOG_IMAGE_FILTER(@"crop rect %@", NSStringFromCGRect(cropRect));
+    resizedCiImage = [resizedCiImage imageByCroppingToRect:cropRect];
+    LOG_IMAGE_FILTER(@"croped ciImage %@", NSStringFromCGRect(resizedCiImage.extent));
+    
+    UIImage *resizedImage = imageFromCIImage(resizedCiImage, imageScale, useGPU);
+    LOG_IMAGE_FILTER(@"resizedImage %@", NSStringFromCGSize(resizedImage.size));
     return resizedImage;
 }
 
@@ -178,6 +235,15 @@
 }
 
 #pragma mark - sepia
+
++ (UIImage *)sepiaInCoreImageWithImage:(UIImage *)image intensity:(CGFloat)intensity useGPU:(BOOL)useGPU
+{
+    CIImage *ciImage = [[CIImage alloc] initWithCGImage:image.CGImage];
+    CIFilter *filter = [CIFilter filterWithName:@"CISepiaTone"
+                                  keysAndValues:kCIInputImageKey, ciImage, @"inputIntensity", @(intensity), nil];
+    CIImage *filterdImage = [filter outputImage];
+    return imageFromCIImage(filterdImage, image.scale, useGPU);
+}
 
 + (UIImage *)sepiaInNYXImagesKitWithImage:(UIImage *)image
 {

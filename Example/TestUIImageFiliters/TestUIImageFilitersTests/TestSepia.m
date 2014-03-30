@@ -36,11 +36,11 @@
     UIImage *cat50x50 = [Utility catImage50x50];
     CGSize size50x50 = CGSizeMake(50.f, 50.f);
     
-    XCTAssertTrue([Utility validateImage:[YSImageFilter sepiaWithImage:cat500x500 intensity:1.f useGPU:NO] estimatedSize:size500x500]);
-    XCTAssertTrue([Utility validateImage:[YSImageFilter sepiaWithImage:cat50x50 intensity:1.f useGPU:NO] estimatedSize:size50x50]);
+    XCTAssertTrue([Utility validateImage:[ImageFilter sepiaInCoreImageWithImage:cat500x500 intensity:1.f useGPU:NO] estimatedSize:size500x500]);
+    XCTAssertTrue([Utility validateImage:[ImageFilter sepiaInCoreImageWithImage:cat50x50 intensity:1.f useGPU:NO] estimatedSize:size50x50]);
     
-    XCTAssertTrue([Utility validateImage:[YSImageFilter sepiaWithImage:cat500x500 intensity:1.f useGPU:YES] estimatedSize:size500x500]);
-    XCTAssertTrue([Utility validateImage:[YSImageFilter sepiaWithImage:cat50x50 intensity:1.f useGPU:YES] estimatedSize:size50x50]);
+    XCTAssertTrue([Utility validateImage:[ImageFilter sepiaInCoreImageWithImage:cat500x500 intensity:1.f useGPU:YES] estimatedSize:size500x500]);
+    XCTAssertTrue([Utility validateImage:[ImageFilter sepiaInCoreImageWithImage:cat50x50 intensity:1.f useGPU:YES] estimatedSize:size50x50]);
 }
 
 - (void)testSepiaInNYXImagesKit

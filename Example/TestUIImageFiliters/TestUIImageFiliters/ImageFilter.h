@@ -12,10 +12,10 @@
 
 #pragma mark - resize
 
-+ (UIImage*)resizeInCoreGraphicsWithImage:(UIImage*)image
-                                     size:(CGSize)newSize
-                                  quality:(CGInterpolationQuality)quality
-                                trimToFit:(BOOL)trimToFit;
++ (UIImage*)resizeInCoreImageWithImage:(UIImage*)image
+                                  size:(CGSize)targetSize
+                                useGPU:(BOOL)useGPU
+                             trimToFit:(BOOL)trimToFit;
 
 + (UIImage*)resizeInNYXImagesKitWithImage:(UIImage*)image
                                      size:(CGSize)size
@@ -27,6 +27,7 @@
 
 #pragma mark - sepia
 
++ (UIImage *)sepiaInCoreImageWithImage:(UIImage *)image intensity:(CGFloat)intensity useGPU:(BOOL)useGPU;
 + (UIImage*)sepiaInNYXImagesKitWithImage:(UIImage*)image;
 + (UIImage*)sepiaInGPUImageWithImage:(UIImage*)image;
 
