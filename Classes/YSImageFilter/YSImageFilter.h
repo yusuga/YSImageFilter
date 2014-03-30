@@ -10,6 +10,8 @@
 
 @interface YSImageFilter : NSObject
 
+/* Resize */
+
 + (UIImage*)resizeWithImage:(UIImage*)image
                        size:(CGSize)targetSize
                   trimToFit:(BOOL)trimToFit;
@@ -18,6 +20,12 @@
                        size:(CGSize)targetSize
                      useGPU:(BOOL)useGPU
                   trimToFit:(BOOL)trimToFit;
+
++ (UIImage*)fastResizeWithImage:(UIImage*)image
+                           size:(CGSize)newSize
+                      trimToFit:(BOOL)trimToFit;
+
+/* Sepia */
 
 + (UIImage *)sepiaWithImage:(UIImage *)image
                   intensity:(CGFloat)intensity

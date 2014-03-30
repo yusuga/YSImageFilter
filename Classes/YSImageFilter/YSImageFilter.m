@@ -152,6 +152,68 @@ static inline UIImage *imageFromCIImage(CIImage *ciImage, CGFloat imageScale, BO
     return resizedImage;
 }
 
++ (UIImage *)fastResizeWithImage:(UIImage *)image size:(CGSize)targetSize trimToFit:(BOOL)trimToFit
+{
+    CGSize sourceImgSize = image.size;
+    LOG_YSIMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImgSize));
+    if (sourceImgSize.height < 1 || sourceImgSize.width < 1 ||
+        targetSize.height < 1 || targetSize.width < 1) {
+        return nil;
+    }
+    
+    CGFloat aspectRatio = sourceImgSize.width / sourceImgSize.height;
+    CGFloat targetAspectRatio = targetSize.width / targetSize.height;
+    CGRect projectTo = CGRectZero;
+    CGSize newSize = targetSize;
+    if (trimToFit) {
+        // Scale and clip image so that the aspect ratio is preserved and the
+        // target size is filled.
+        if (targetAspectRatio < aspectRatio) {
+            // clip the x-axis.
+            projectTo.size.width = targetSize.height * aspectRatio;
+            projectTo.size.height = targetSize.height;
+            projectTo.origin.x = (targetSize.width - projectTo.size.width) / 2;
+            projectTo.origin.y = 0;
+        } else {
+            // clip the y-axis.
+            projectTo.size.width = targetSize.width;
+            projectTo.size.height = targetSize.width / aspectRatio;
+            projectTo.origin.x = 0;
+            projectTo.origin.y = (targetSize.height - projectTo.size.height) / 2;
+        }
+    } else {
+        // Scale image to ensure it fits inside the specified targetSize.
+        if (targetAspectRatio < aspectRatio) {
+            // target is less wide than the original.
+            projectTo.size.width = newSize.width;
+            projectTo.size.height = projectTo.size.width / aspectRatio;
+            newSize = projectTo.size;
+        } else {
+            // target is wider than the original.
+            projectTo.size.height = newSize.height;
+            projectTo.size.width = projectTo.size.height * aspectRatio;
+            newSize = projectTo.size;
+        }
+    } // if (clip)
+    LOG_YSIMAGE_FILTER(@"before CGRectIntegral(projectTo); projectTo: %@", NSStringFromCGRect(projectTo));
+    projectTo = CGRectIntegral(projectTo);
+    LOG_YSIMAGE_FILTER(@"after CGRectIntegral(projectTo); projectTo: %@", NSStringFromCGRect(projectTo));
+    // There's no CGSizeIntegral, so we fake our own.
+    CGRect integralRect = CGRectZero;
+    integralRect.size = newSize;
+    newSize = CGRectIntegral(integralRect).size;
+    LOG_YSIMAGE_FILTER(@"newSize: %@", NSStringFromCGSize(newSize));
+    
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.f);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetInterpolationQuality(context, kCGInterpolationLow);
+    [image drawInRect:projectTo];
+    UIImage* resizedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    LOG_YSIMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
+    return resizedImage;
+}
+
 #pragma mark - Sepia
 
 + (UIImage *)sepiaWithImage:(UIImage *)image intensity:(CGFloat)intensity useGPU:(BOOL)useGPU
