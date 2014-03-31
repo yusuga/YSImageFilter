@@ -126,10 +126,10 @@ CoreGraphics vs [NYXImagesKit](https://github.com/Nyx0uf/NYXImagesKit) vs [GPUIm
  
     Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the License for the specific language governing permissions and limitations under the License.
 
-    Copyright &copy; 2014 Yu Sugawara (https://github.com/yusuga)
-    Licensed under the MIT License.
-    
     ***
+
+    Copyright &copy; 2014 Yu Sugawara (https://github.com/yusuga)
+    Licensed under the MIT License.    
 
     Permission is hereby granted, free of charge, to any person obtaining a 
     copy of this software and associated documentation files (the "Software"),
