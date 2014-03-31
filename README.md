@@ -42,7 +42,7 @@ CoreGraphics vs [NYXImagesKit](https://github.com/Nyx0uf/NYXImagesKit) vs [GPUIm
 
 ###Picture image
 
-![picture image](http://cl.ly/image/1H04021P2z12/cat.png)
+![picture image](http://cl.ly/image/2R0R3l0o0q35/cat.png)
 
 ####100 trials
 
@@ -74,7 +74,7 @@ CoreGraphics vs [NYXImagesKit](https://github.com/Nyx0uf/NYXImagesKit) vs [GPUIm
 
 ##Benchmark - Sepia
 
-GPUImage <<< NYXImagesKit(CoreImage)
+![picture image](http://cl.ly/image/2R0R3l0o0q35/cat.png)
 
 ###100 trials
 
@@ -115,10 +115,21 @@ GPUImage <<< NYXImagesKit(CoreImage)
 |GPUImage|0.001799 (555 FPS)|0.006431 (155 FPS)|
 
 
-License
-----------
+##License
+
+    GTMUIImage+Resize.m
+    Copyright 2009 Google Inc.
+    
+    Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at
+     
+    http://www.apache.org/licenses/LICENSE-2.0
+ 
+    Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the License for the specific language governing permissions and limitations under the License.
+
     Copyright &copy; 2014 Yu Sugawara (https://github.com/yusuga)
     Licensed under the MIT License.
+    
+    ***
 
     Permission is hereby granted, free of charge, to any person obtaining a 
     copy of this software and associated documentation files (the "Software"),
@@ -136,4 +147,4 @@ License
     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-    DEALINGS IN THE SOFTWARE.
+    DEALINGS IN THE SOFTWARE.    
