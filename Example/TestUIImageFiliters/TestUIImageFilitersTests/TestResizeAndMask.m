@@ -13,11 +13,11 @@
 
 typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 
-@interface TestResize : XCTestCase
+@interface TestResizeAndMask : XCTestCase
 
 @end
 
-@implementation TestResize
+@implementation TestResizeAndMask
 
 - (void)setUp
 {
@@ -36,57 +36,21 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 - (void)testResizeSquareInCoreGraphics
 {
     [self resizeSquareWithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationNone];
-    }];
-    
-    [self resizeSquareWithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationLow];
-    }];
-    
-    [self resizeSquareWithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationMedium];
-    }];
-
-    [self resizeSquareWithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationHigh];
+        return [self resizeInCoreGraphicsWithImage:image size:size];
     }];
 }
 
 - (void)testResizeRectangle4to3InCoreGraphics
 {
     [self resizeRectangle4to3WithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationNone];
-    }];
-    
-    [self resizeRectangle4to3WithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationLow];
-    }];
-    
-    [self resizeRectangle4to3WithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationMedium];
-    }];
-
-    [self resizeRectangle4to3WithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationHigh];
+        return [self resizeInCoreGraphicsWithImage:image size:size];
     }];
 }
 
 - (void)testResizeRectangle3to4InCoreGraphics
 {
     [self resizeRectangle3to4WithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationNone];
-    }];
-    
-    [self resizeRectangle3to4WithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationLow];
-    }];
-    
-    [self resizeRectangle3to4WithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationMedium];
-    }];
-
-    [self resizeRectangle3to4WithProcess:^BOOL(UIImage *image, CGSize size) {
-        return [self resizeInCoreGraphicsWithImage:image size:size quality:kCGInterpolationHigh];
+        return [self resizeInCoreGraphicsWithImage:image size:size];
     }];
 }
 
@@ -171,12 +135,35 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 
 #pragma mark - resize process
 
-- (BOOL)resizeInCoreGraphicsWithImage:(UIImage*)image size:(CGSize)size quality:(CGInterpolationQuality)quality
+- (BOOL)resizeInCoreGraphicsWithImage:(UIImage*)image size:(CGSize)size
 {
-    if (![self validateResizedImageWithSourceImage:image resizeSize:size process:^UIImage *(UIImage *sourceImage, CGSize resizeSize, BOOL trimToFit) {
-        return [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit mask:YSImageFilterMaskNone];
-    }]) {
-        return NO;
+    NSArray *qualities = @[@(kCGInterpolationNone),
+                           @(kCGInterpolationLow),
+                           @(kCGInterpolationMedium),
+                           @(kCGInterpolationHigh),
+                           @(kCGInterpolationDefault)];
+    
+    NSArray *masks = @[@(YSImageFilterMaskNone),
+                       @(YSImageFilterMaskRoundedCorners),
+                       @(YSImageFilterMaskCircle)];
+    
+    for (NSNumber *qualityNum in qualities) {
+        CGInterpolationQuality quality = [qualityNum integerValue];
+        for (NSNumber *maskNum in masks) {
+            YSImageFilterMask mask = [maskNum integerValue];
+            
+            if (![self validateResizedImageWithSourceImage:image resizeSize:size process:^UIImage *(UIImage *sourceImage,
+                                                                                                    CGSize resizeSize,
+                                                                                                    BOOL trimToFit)
+                  {
+                return [YSImageFilter resizeWithImage:sourceImage
+                                                 size:size
+                                              quality:quality trimToFit:trimToFit
+                                                 mask:mask];
+            }]) {
+                return NO;
+            }
+        }
     }
     return YES;
 }
