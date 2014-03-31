@@ -215,9 +215,9 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 
 - (void)resizeSquareWithProcess:(QuadrangleProcess)process
 {
-    NSArray *images = @[[Utility imageWithSize:CGSizeMake(100.f, 100.f)],
-                        [Utility imageWithSize:CGSizeMake(50.f, 50.f)],
-                        [Utility imageWithSize:CGSizeMake(1.f, 1.f)]];
+    NSArray *images = @[[Utility solidColorImageWithSize:CGSizeMake(100.f, 100.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(50.f, 50.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(1.f, 1.f)]];
     for (UIImage *image in images) {
         if (!process(image, CGSizeMake(50.f, 50.f))) {
             return;
@@ -227,9 +227,9 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 
 - (void)resizeRectangle4to3WithProcess:(QuadrangleProcess)process
 {
-    NSArray *images = @[[Utility imageWithSize:CGSizeMake(120.f, 90.f)],
-                        [Utility imageWithSize:CGSizeMake(40.f, 30.f)],
-                        [Utility imageWithSize:CGSizeMake(4.f, 3.f)]];
+    NSArray *images = @[[Utility solidColorImageWithSize:CGSizeMake(120.f, 90.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(40.f, 30.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(4.f, 3.f)]];
     for (UIImage *image in images) {
         if (!process(image, CGSizeMake(40.f, 30.f))) {
             return;
@@ -239,9 +239,9 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 
 - (void)resizeRectangle3to4WithProcess:(QuadrangleProcess)process
 {
-    NSArray *images = @[[Utility imageWithSize:CGSizeMake(90.f, 120.f)],
-                        [Utility imageWithSize:CGSizeMake(30.f, 40.f)],
-                        [Utility imageWithSize:CGSizeMake(3.f, 4.f)]];
+    NSArray *images = @[[Utility solidColorImageWithSize:CGSizeMake(90.f, 120.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(30.f, 40.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(3.f, 4.f)]];
     for (UIImage *image in images) {
         if (!process(image, CGSizeMake(30.f, 40.f))) {
             return;

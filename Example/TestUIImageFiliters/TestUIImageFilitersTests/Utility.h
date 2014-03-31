@@ -14,9 +14,8 @@ typedef void(^EnumerateSizes)(CGSize size, BOOL *finish);
 
 @interface Utility : NSObject
 
-+ (UIImage*)imageWithSize:(CGSize)size;
-+ (UIImage*)catImage500x500;
-+ (UIImage*)catImage50x50;
++ (UIImage*)solidColorImageWithSize:(CGSize)size;
++ (UIImage*)catImageWithSize:(CGSize)size;
 
 + (BOOL)validateImage:(UIImage*)image estimatedSize:(CGSize)estimatedSize;
 + (BOOL)validateImageScaleWithImage:(UIImage*)image;

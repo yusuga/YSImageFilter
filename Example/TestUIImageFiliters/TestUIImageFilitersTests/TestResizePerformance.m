@@ -34,10 +34,10 @@
 
 - (void)testAllAverageWithImage1000x1000to300x300
 {
-    [self allAverageWithImage:[Utility imageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
+    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
     return;
 #if 1
-    [self allAverageWithImage:[Utility imageWithSize:CGSizeMake(500.f, 500.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
+    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(500.f, 500.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
 #else
     [self allAverageWithImage:[Utility catImage500x500] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
 #endif
@@ -45,17 +45,17 @@
 
 - (void)testAllAverageTrimToFitWithImage1000x1000to300x300
 {
-    [self allAverageWithImage:[Utility imageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:YES];
+    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:YES];
 }
 
 - (void)testAllAverageWithImage1000x1000To50x50
 {
-    [self allAverageWithImage:[Utility imageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(50.f, 50.f) trimToFit:NO];
+    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(50.f, 50.f) trimToFit:NO];
 }
 
 - (void)testAllAverageTrimToFitWithImage1000x1000To50x50
 {
-    [self allAverageWithImage:[Utility imageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(50.f, 50.f) trimToFit:YES];
+    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(50.f, 50.f) trimToFit:YES];
 }
 
 #pragma mark - cpu busy

@@ -20,12 +20,12 @@
 
 - (void)testAllAverageWithCatImage500x500
 {
-    [self allAverageWithImage:[Utility catImage500x500]];
+    [self allAverageWithImage:[Utility catImageWithSize:CGSizeMake(500.f, 500.f)]];
 }
 
 - (void)testAllAverageWithCatImage50x50
 {
-    [self allAverageWithImage:[Utility catImage50x50]];
+    [self allAverageWithImage:[Utility catImageWithSize:CGSizeMake(50.f, 50.f)]];
 }
 
 - (void)allAverageWithImage:(UIImage*)sourceImage

@@ -27,35 +27,34 @@
     [super tearDown];
 }
 
-- (void)testImageSize
-{
-    CGSize size = CGSizeMake(50.f, 50.f);
-    UIImage *img = [Utility imageWithSize:size];
-    XCTAssertTrue(CGSizeEqualToSize(size, img.size), @"size: %@, img size: %@", NSStringFromCGSize(size), NSStringFromCGSize(img.size));
-}
-
-- (void)testImageScale
-{
-    XCTAssertTrue([Utility validateImageScaleWithImage:[Utility imageWithSize:CGSizeMake(50.f, 50.f)]]);
-}
-
 - (void)testValidateImage
 {
     CGSize size = CGSizeMake(100.f, 100.f);
     XCTAssertFalse([Utility validateImage:nil estimatedSize:size]);
-    XCTAssertTrue([Utility validateImage:[Utility imageWithSize:size] estimatedSize:size]);
-    XCTAssertFalse([Utility validateImage:[Utility imageWithSize:size] estimatedSize:CGSizeMake(50.f, 50.f)]);
+    XCTAssertTrue([Utility validateImage:[Utility solidColorImageWithSize:size] estimatedSize:size]);
+    XCTAssertFalse([Utility validateImage:[Utility solidColorImageWithSize:size] estimatedSize:CGSizeMake(50.f, 50.f)]);
 }
 
-- (void)testCatImage
+- (void)testSolidColorImageSize
 {
-    UIImage *cat500x500 = [Utility catImage500x500];
-    XCTAssertTrue([Utility validateImage:cat500x500 estimatedSize:CGSizeMake(500.f, 500.f)]);
-    XCTAssertTrue([Utility validateImageScaleWithImage:cat500x500]);
-    
-    UIImage *cat50x50 = [Utility catImage50x50];
-    XCTAssertTrue([Utility validateImage:cat50x50 estimatedSize:CGSizeMake(50.f, 50.f)]);
-    XCTAssertTrue([Utility validateImageScaleWithImage:cat50x50]);
+    CGSize size = CGSizeMake(100.f, 100.f);
+    XCTAssertTrue([Utility validateImage:[Utility solidColorImageWithSize:size] estimatedSize:size]);
+}
+
+- (void)testSolidColorImageScale
+{
+    XCTAssertTrue([Utility validateImageScaleWithImage:[Utility solidColorImageWithSize:CGSizeMake(100.f, 100.f)]]);
+}
+
+- (void)testCatImageSize
+{
+    CGSize size = CGSizeMake(100.f, 100.f);
+    XCTAssertTrue([Utility validateImage:[Utility catImageWithSize:size] estimatedSize:size]);
+}
+
+- (void)testCatImageScale
+{
+    XCTAssertTrue([Utility validateImageScaleWithImage:[Utility catImageWithSize:CGSizeMake(100.f, 100.f)]]);
 }
 
 @end

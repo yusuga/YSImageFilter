@@ -31,10 +31,10 @@
 
 - (void)testSepiaInCoreImage
 {
-    UIImage *cat500x500 = [Utility catImage500x500];
     CGSize size500x500 = CGSizeMake(500.f, 500.f);
-    UIImage *cat50x50 = [Utility catImage50x50];
+    UIImage *cat500x500 = [Utility catImageWithSize:size500x500];
     CGSize size50x50 = CGSizeMake(50.f, 50.f);
+    UIImage *cat50x50 = [Utility catImageWithSize:size50x50];
     
     XCTAssertTrue([Utility validateImage:[ImageFilter sepiaInCoreImageWithImage:cat500x500 intensity:1.f useGPU:NO] estimatedSize:size500x500]);
     XCTAssertTrue([Utility validateImage:[ImageFilter sepiaInCoreImageWithImage:cat50x50 intensity:1.f useGPU:NO] estimatedSize:size50x50]);

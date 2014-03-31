@@ -14,6 +14,7 @@
 		B81B75B018E5E3A700E822F0 /* TestSepiaPerformance.m in Sources */ = {isa = PBXBuildFile; fileRef = B81B75AF18E5E3A600E822F0 /* TestSepiaPerformance.m */; };
 		B8814D9C18E916890041A7A5 /* MaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814D9B18E916890041A7A5 /* MaskViewController.m */; };
 		B8814D9F18E916D00041A7A5 /* ExclusiveSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814D9E18E916D00041A7A5 /* ExclusiveSelectionViewController.m */; };
+		B8814DA118E933B60041A7A5 /* TestMask.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814DA018E933B60041A7A5 /* TestMask.m */; };
 		B8CE5CAA18E4849C00268B7C /* TestResize.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CE5CA918E4849C00268B7C /* TestResize.m */; };
 		B8CE5CAD18E485F100268B7C /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CE5CAC18E485F100268B7C /* Utility.m */; };
 		B8D734B818E29DFC004850C0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8D734B718E29DFC004850C0 /* Foundation.framework */; };
@@ -61,6 +62,7 @@
 		B8814D9B18E916890041A7A5 /* MaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaskViewController.m; sourceTree = "<group>"; };
 		B8814D9D18E916D00041A7A5 /* ExclusiveSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusiveSelectionViewController.h; sourceTree = "<group>"; };
 		B8814D9E18E916D00041A7A5 /* ExclusiveSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExclusiveSelectionViewController.m; sourceTree = "<group>"; };
+		B8814DA018E933B60041A7A5 /* TestMask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMask.m; sourceTree = "<group>"; };
 		B8CE5CA918E4849C00268B7C /* TestResize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestResize.m; sourceTree = "<group>"; };
 		B8CE5CAB18E485F100268B7C /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
 		B8CE5CAC18E485F100268B7C /* Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utility.m; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 				B8EADF3618E48AD10073E3EE /* TestUtility.m */,
 				B8CE5CA918E4849C00268B7C /* TestResize.m */,
 				B81B75A818E59F0700E822F0 /* TestResizePerformance.m */,
+				B8814DA018E933B60041A7A5 /* TestMask.m */,
 				B81B75AD18E5E17800E822F0 /* TestSepia.m */,
 				B81B75AF18E5E3A600E822F0 /* TestSepiaPerformance.m */,
 				B8D734DD18E29DFC004850C0 /* Supporting Files */,
@@ -396,6 +399,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B8814DA118E933B60041A7A5 /* TestMask.m in Sources */,
 				B8EADF3718E48AD10073E3EE /* TestUtility.m in Sources */,
 				B81B75AE18E5E17800E822F0 /* TestSepia.m in Sources */,
 				B8CE5CAD18E485F100268B7C /* Utility.m in Sources */,

@@ -8,43 +8,24 @@
 
 #import "Utility.h"
 #import <YSUIKitAdditions/UIImage+YSUIKitAdditions.h>
-#import "ImageFilter.h"
+#import "YSImageFilter.h"
 
 NSUInteger const kNumberOfTrials = 100;
 
 @implementation Utility
 
-+ (UIImage*)imageWithSize:(CGSize)size
++ (UIImage*)solidColorImageWithSize:(CGSize)size
 {
     return [UIImage ys_imageFromColor:[UIColor redColor] withSize:size];
 }
 
-+ (UIImage*)catImage500x500
++ (UIImage *)catImageWithSize:(CGSize)size
 {
-    static UIImage *s_image;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        s_image = [UIImage imageNamed:@"cat"];
-        NSAssert(s_image != nil, nil);
-        CGSize size = CGSizeMake(500.f, 500.f);
-        s_image = [ImageFilter resizeInCoreImageWithImage:s_image size:size useGPU:YES trimToFit:YES];
-        NSAssert2(CGSizeEqualToSize(size, s_image.size), @"size: %@, s_image.size: %@", NSStringFromCGSize(size), NSStringFromCGSize(s_image.size));
-    });
-    return s_image;
-}
-
-+ (UIImage*)catImage50x50
-{
-    static UIImage *s_image;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        s_image = [UIImage imageNamed:@"cat"];
-        NSAssert(s_image != nil, nil);
-        CGSize size = CGSizeMake(50.f, 50.f);
-        s_image = [ImageFilter resizeInCoreImageWithImage:s_image size:size useGPU:YES trimToFit:YES];
-        NSAssert2(CGSizeEqualToSize(size, s_image.size), @"size: %@, s_image.size: %@", NSStringFromCGSize(size), NSStringFromCGSize(s_image.size));
-    });
-    return s_image;
+    return [YSImageFilter resizeWithImage:[UIImage imageNamed:@"cat"]
+                                     size:size
+                                  quality:kCGInterpolationHigh
+                                trimToFit:YES
+                                     mask:YSImageFilterMaskNone];
 }
 
 + (BOOL)validateImage:(UIImage*)image estimatedSize:(CGSize)estimatedSize
