@@ -1,71 +1,72 @@
 #YSImageFilter
 
-CoreImage wrapper.
+Allows filtering, resizing, masking.
 
 #Example - TestUIImageFilters
 
-Simple drawing CoreGraphics vs [NYXImagesKit](https://github.com/Nyx0uf/NYXImagesKit) vs  vs [GPUImage](https://github.com/BradLarson/GPUImage) vs CoreImage
+CoreGraphics vs [NYXImagesKit](https://github.com/Nyx0uf/NYXImagesKit) vs [GPUImage](https://github.com/BradLarson/GPUImage) vs CoreImage
 
 ##Benchmark - Resize
 
-###1000x1000px -> 50x50px
+###Solid color image
 
-CoreGraphics(Low) <<< CoreImage < GPUImage < NYXImagesKit = CoreGraphics(High)
-
-###1000x1000px -> 300x300px
-
-CoreGraphics(Low) < GPUImage < CoreImage < NYXImagesKit = CoreGraphics(High)
-
-###100 trials
+####100 trials
 
 **[iPhone4 - iOS7.0]**
 
 ||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
 |:---|:---|:---|
-|CoreGraphics(None)|0.003905 (256 FPS)|0.042514 (23 FPS)|
-|CoreGraphics(Low)|	0.003729 (268 FPS)|0.082422 (12 FPS)|
-|CoreGraphics(High)|0.209191 (4 FPS)|0.480908 (2 FPS)|
-|NYXImagesKit|0.207475 (4 FPS)|0.478156 (2 FPS)|
-|GPUImage|0.040550 (24 FPS)|0.039459 (25 FPS)|
-|CoreImage(CPU)|0.036824 (27 FPS)|0.054015 (18 FPS)|
-|CoreImage(GPU)|0.035782 (27 FPS)|0.052756 (18 FPS)|
-
-**[iPhone4s - iOS7.0]**
-
-||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
-|:---|:---|:---|
-|CoreGraphics(None)|0.001483 (674 FPS)|0.023242 (43 FPS)|
-|CoreGraphics(Low)|0.001498 (667 FPS)|0.030422 (32 FPS)|
-|CoreGraphics(High)|0.139165 (7 FPS)|0.281652 (3 FPS)|
-|NYXImagesKit|0.138310 (7 FPS)|0.281438 (3 FPS)|
-|GPUImage|0.027866 (35 FPS)|0.029786 (33 FPS)|
-|CoreImage(CPU)|0.016034 (62 FPS)|0.022625 (44 FPS)|
-|CoreImage(GPU)|0.015991 (62 FPS)|0.022635 (44 FPS)|
-
-
-**[iPhone5 - iOS7.0]**
-
-||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
-|:---|:---|:---|
-|CoreGraphics(None)|0.000708 (1412 FPS)|0.007247 (137 FPS)|
-|CoreGraphics(Low)|0.000605 (1652 FPS)|0.023104 (43 FPS)|
-|CoreGraphics(High)|0.050827 (19 FPS)|0.128816 (7 FPS)|
-|NYXImagesKit|0.050291 (19 FPS)|0.129923 (7 FPS)|
-|GPUImage|0.008119 (123 FPS)|0.010465 (95 FPS)|
-|CoreImage(CPU)|0.011094 (90 FPS)|0.015556 (64 FPS)|
-|CoreImage(GPU)|0.011037 (90 FPS)|0.015441 (64 FPS)|
+|CoreGraphics(None)|0.002660 (375 FPS)|0.034310 (29 FPS)|
+|CoreGraphics(Low)|0.002756 (362 FPS)|0.075693 (13 FPS)|
+|CoreGraphics(Medium)|0.038360 (26 FPS)|0.126424 (7 FPS)|
+|CoreGraphics(High)|0.060210 (16 FPS)|0.172681 (5 FPS)|
+|NYXImagesKit|0.051545 (19 FPS)|0.109839 (9 FPS)|
+|GPUImage|0.011259 (88 FPS)|0.012334 (81 FPS)|
+|CoreImage(CPU)|0.011139 (89 FPS)|0.015267 (65 FPS)|
+|CoreImage(GPU)|0.012046 (83 FPS)|0.015520 (64 FPS)|
 
 **[iPhone5s - iOS7.1]**
 
 ||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
 |:---|:---|:---|
-|CoreGraphics(None)|0.000392 (2548 FPS)|0.005476 (182 FPS)|
-|CoreGraphics(Low)|0.000386 (2591 FPS)|0.008912 (112 FPS)|
-|CoreGraphics(High)|0.021515 (46 FPS)|0.049164 (20 FPS)|
-|NYXImagesKit|0.021061 (47 FPS)|0.048945 (20 FPS)|
-|GPUImage|0.010388 (96 FPS)|0.011134 (89 FPS)|
-|CoreImage(CPU)|0.005921 (168 FPS)|0.012817 (78 FPS)|
-|CoreImage(GPU)|0.006170 (162 FPS)|0.016473 (60 FPS)|
+|CoreGraphics(None)|0.000261 (3825 FPS)|0.005128 (195 FPS)|
+|CoreGraphics(Low)|0.000283 (3533 FPS)|0.007939 (125 FPS)|
+|CoreGraphics(Medium)|0.003536 (282 FPS)|0.013599 (73 FPS)|
+|CoreGraphics(High)|0.006976 (143 FPS)|0.019372 (51 FPS)|
+|NYXImagesKit|0.005342 (187 FPS)|0.012160 (82 FPS)|
+|GPUImage|0.004330 (230 FPS)|0.005025 (199 FPS)|
+|CoreImage(CPU)|0.002575 (388 FPS)|0.003410 (293 FPS)|
+|CoreImage(GPU)|0.002737 (365 FPS)|0.004470 (223 FPS)|
+
+###Picture image
+
+####100 trials
+
+**[iPhone4 - iOS7.0]**
+
+||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
+|:---|:---|:---|
+|CoreGraphics(None)|0.003887 (257 FPS)|0.044526 (22 FPS)|
+|CoreGraphics(Low)|0.004481 (223 FPS)|0.081731 (12 FPS)|
+|CoreGraphics(Medium)|0.121744 (8 FPS)|0.271093 (3 FPS)|
+|CoreGraphics(High)|0.206694 (4 FPS)|0.479763 (2 FPS)|
+|NYXImagesKit|0.206455 (4 FPS)|0.477664 (2 FPS)|
+|GPUImage|0.039227 (25 FPS)|0.040107 (24 FPS)|
+|CoreImage(CPU)|0.037182 (26 FPS)|0.053168 (18 FPS)|
+|CoreImage(GPU)|0.036454 (27 FPS)|0.054199 (18 FPS)|
+
+**[iPhone5s - iOS7.1]**
+
+||1000x1000px -> 50x50px|1000x1000px -> 300x300px|
+|:---|:---|:---|
+|CoreGraphics(None)|0.000361 (2768 FPS)|0.005303 (188 FPS)|
+|CoreGraphics(Low)|0.000363 (2755 FPS)|0.008804 (113 FPS)|
+|CoreGraphics(Medium)|0.009869 (101 FPS)|0.025250 (39 FPS)|
+|CoreGraphics(High)|0.021267 (47 FPS)|0.049103 (20 FPS)|
+|NYXImagesKit|0.021170 (47 FPS)|0.048766 (20 FPS)|
+|GPUImage|0.010341 (96 FPS)|0.011156 (89 FPS)|
+|CoreImage(CPU)|0.006236 (160 FPS)|0.012596 (79 FPS)|
+|CoreImage(GPU)|0.008334 (119 FPS)|0.016483 (60 FPS)|
 
 ##Benchmark - Sepia
 
