@@ -10,6 +10,8 @@ CoreGraphics vs [NYXImagesKit](https://github.com/Nyx0uf/NYXImagesKit) vs [GPUIm
 
 ###Solid color image
 
+![solid color image](http://cl.ly/image/2N2F3f2w1q16/solid.png)
+
 ####100 trials
 
 **[iPhone4 - iOS7.0]**
@@ -39,6 +41,8 @@ CoreGraphics vs [NYXImagesKit](https://github.com/Nyx0uf/NYXImagesKit) vs [GPUIm
 |CoreImage(GPU)|0.002737 (365 FPS)|0.004470 (223 FPS)|
 
 ###Picture image
+
+![picture image](http://cl.ly/image/1H04021P2z12/cat.png)
 
 ####100 trials
 
