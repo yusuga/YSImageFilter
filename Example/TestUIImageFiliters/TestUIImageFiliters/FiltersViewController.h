@@ -21,7 +21,7 @@ typedef UIImage*(^SetImageProcess)(UIImage *sourceImage, CGSize size);
 
 @property (weak, nonatomic) UIImageView *targetImageView;
 
-- (void)setImageWithProcessName:(NSString*)processName process:(SetImageProcess)process size:(CGSize)size;
+- (void)setImageWithProcessName:(NSString*)processName size:(CGSize)size process:(SetImageProcess)process;
 
 - (void)clearImageView;
 

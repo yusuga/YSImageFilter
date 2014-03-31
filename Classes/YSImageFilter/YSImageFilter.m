@@ -10,7 +10,7 @@
 @import CoreImage;
 
 #if DEBUG
-    #if 0
+    #if 1
         #define LOG_YSIMAGE_FILTER(...) NSLog(__VA_ARGS__)
     #endif
 #endif
@@ -19,51 +19,6 @@
     #define LOG_YSIMAGE_FILTER(...)
 #endif
 
-typedef void(^ResizedRect)(CGRect projectTo, CGSize newSize);
-
-@implementation YSImageFilter
-
-#pragma mark - resize
-
-+ (UIImage *)fastResizeWithImage:(UIImage *)image size:(CGSize)newSize trimToFit:(BOOL)trimToFit
-{
-    return [self resizeWithImage:image size:newSize quality:kCGInterpolationLow trimToFit:trimToFit];
-}
-
-+ (UIImage *)highQualityResizeWithImage:(UIImage *)image size:(CGSize)newSize trimToFit:(BOOL)trimToFit
-{
-    return [self resizeWithImage:image size:newSize quality:kCGInterpolationHigh trimToFit:trimToFit];
-}
-
-+ (UIImage*)resizeWithImage:(UIImage*)sourceImage
-                       size:(CGSize)targetSize
-                    quality:(CGInterpolationQuality)quality
-                  trimToFit:(BOOL)trimToFit
-{
-    CGSize sourceImageSize = sourceImage.size;
-    LOG_YSIMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImgSize));
-    if (sourceImageSize.height < 1 || sourceImageSize.width < 1 ||
-        targetSize.height < 1 || targetSize.width < 1) {
-        return nil;
-    }
-
-    CGRect projectTo;
-    CGSize newSize;
-    [self resizedRectWithSourceImageSize:sourceImageSize
-                              targetSize:targetSize
-                               trimToFit:trimToFit
-                            projectToPtr:&projectTo
-                              newSizePtr:&newSize];
-    
-    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.f);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetInterpolationQuality(context, quality);
-    [sourceImage drawInRect:projectTo];
-    UIImage* resizedImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    LOG_YSIMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
-    return resizedImage;
-}
 
 /*
  GTMUIImage+Resize.m
@@ -81,11 +36,11 @@ typedef void(^ResizedRect)(CGRect projectTo, CGSize newSize);
  License for the specific language governing permissions and limitations under
  the License.
  */
-+ (void)resizedRectWithSourceImageSize:(CGSize)sourceImageSize
-                            targetSize:(CGSize)targetSize
-                             trimToFit:(BOOL)trimToFit
-                          projectToPtr:(CGRect*)projectToPtr
-                            newSizePtr:(CGSize*)newSizePtr
+static inline void resizedRectWithSourceImageSize(CGSize sourceImageSize,
+                                                  CGSize targetSize,
+                                                  BOOL trimToFit,
+                                                  CGRect* projectToPtr,
+                                                  CGSize* newSizePtr)
 {
     CGFloat aspectRatio = sourceImageSize.width / sourceImageSize.height;
     CGFloat targetAspectRatio = targetSize.width / targetSize.height;
@@ -135,5 +90,163 @@ typedef void(^ResizedRect)(CGRect projectTo, CGSize newSize);
     *newSizePtr = newSize;
 }
 
+#pragma mark - iOS7 RoundedRect
+
+#define TOP_LEFT(X, Y)\
+    CGPointMake(rect.origin.x + X * limitedRadius,\
+    rect.origin.y + Y * limitedRadius)
+
+#define TOP_RIGHT(X, Y)\
+    CGPointMake(rect.origin.x + rect.size.width - X * limitedRadius,\
+    rect.origin.y + Y * limitedRadius)
+
+#define BOTTOM_RIGHT(X, Y)\
+    CGPointMake(rect.origin.x + rect.size.width - X * limitedRadius,\
+    rect.origin.y + rect.size.height - Y * limitedRadius)
+
+#define BOTTOM_LEFT(X, Y)\
+    CGPointMake(rect.origin.x + X * limitedRadius,\
+    rect.origin.y + rect.size.height - Y * limitedRadius)
+
+static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
+{
+    /* http://scriptogr.am/jimniels/post/calculate-the-border-radius-for-ios-style-icons-using-a-simple-ratio */
+    static CGFloat kCornerRadiusRatio = 0.17544f;
+    
+    static NSMutableDictionary *s_cache;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_cache = [NSMutableDictionary dictionary];
+    });
+    NSString *key = [NSString stringWithFormat:@"%@", NSStringFromCGRect(rect)];
+    
+    UIBezierPath *path = [s_cache objectForKey:key];
+    
+    if (path) {
+        return path.CGPath;
+    }
+    
+    /* http://www.paintcodeapp.com/blogpost/code-for-ios-7-rounded-rectangles */
+    
+    CGFloat radius = rect.size.width * kCornerRadiusRatio;
+    path = UIBezierPath.bezierPath;
+    CGFloat limit = MIN(rect.size.width, rect.size.height) / 2 / 1.52866483;
+    CGFloat limitedRadius = MIN(radius, limit);
+    
+    [path moveToPoint: TOP_LEFT(1.52866483, 0.00000000)];
+    [path addLineToPoint: TOP_RIGHT(1.52866471, 0.00000000)];
+    [path addCurveToPoint: TOP_RIGHT(0.66993427, 0.06549600)
+            controlPoint1: TOP_RIGHT(1.08849323, 0.00000000)
+            controlPoint2: TOP_RIGHT(0.86840689, 0.00000000)];
+    [path addLineToPoint: TOP_RIGHT(0.63149399, 0.07491100)];
+    [path addCurveToPoint: TOP_RIGHT(0.07491176, 0.63149399)
+            controlPoint1: TOP_RIGHT(0.37282392, 0.16905899)
+            controlPoint2: TOP_RIGHT(0.16906013, 0.37282401)];
+    [path addCurveToPoint: TOP_RIGHT(0.00000000, 1.52866483)
+            controlPoint1: TOP_RIGHT(0.00000000, 0.86840701)
+            controlPoint2: TOP_RIGHT(0.00000000, 1.08849299)];
+    [path addLineToPoint: BOTTOM_RIGHT(0.00000000, 1.52866471)];
+    [path addCurveToPoint: BOTTOM_RIGHT(0.06549569, 0.66993493)
+            controlPoint1: BOTTOM_RIGHT(0.00000000, 1.08849323)
+            controlPoint2: BOTTOM_RIGHT(0.00000000, 0.86840689)];
+    [path addLineToPoint: BOTTOM_RIGHT(0.07491111, 0.63149399)];
+    [path addCurveToPoint: BOTTOM_RIGHT(0.63149399, 0.07491111)
+            controlPoint1: BOTTOM_RIGHT(0.16905883, 0.37282392)
+            controlPoint2: BOTTOM_RIGHT(0.37282392, 0.16905883)];
+    [path addCurveToPoint: BOTTOM_RIGHT(1.52866471, 0.00000000)
+            controlPoint1: BOTTOM_RIGHT(0.86840689, 0.00000000)
+            controlPoint2: BOTTOM_RIGHT(1.08849323, 0.00000000)];
+    [path addLineToPoint: BOTTOM_LEFT(1.52866483, 0.00000000)];
+    [path addCurveToPoint: BOTTOM_LEFT(0.66993397, 0.06549569)
+            controlPoint1: BOTTOM_LEFT(1.08849299, 0.00000000)
+            controlPoint2: BOTTOM_LEFT(0.86840701, 0.00000000)];
+    [path addLineToPoint: BOTTOM_LEFT(0.63149399, 0.07491111)];
+    [path addCurveToPoint: BOTTOM_LEFT(0.07491100, 0.63149399)
+            controlPoint1: BOTTOM_LEFT(0.37282401, 0.16905883)
+            controlPoint2: BOTTOM_LEFT(0.16906001, 0.37282392)];
+    [path addCurveToPoint: BOTTOM_LEFT(0.00000000, 1.52866471)
+            controlPoint1: BOTTOM_LEFT(0.00000000, 0.86840689)
+            controlPoint2: BOTTOM_LEFT(0.00000000, 1.08849323)];
+    [path addLineToPoint: TOP_LEFT(0.00000000, 1.52866483)];
+    [path addCurveToPoint: TOP_LEFT(0.06549600, 0.66993397)
+            controlPoint1: TOP_LEFT(0.00000000, 1.08849299)
+            controlPoint2: TOP_LEFT(0.00000000, 0.86840701)];
+    [path addLineToPoint: TOP_LEFT(0.07491100, 0.63149399)];
+    [path addCurveToPoint: TOP_LEFT(0.63149399, 0.07491100)
+            controlPoint1: TOP_LEFT(0.16906001, 0.37282401)
+            controlPoint2: TOP_LEFT(0.37282401, 0.16906001)];
+    [path addCurveToPoint: TOP_LEFT(1.52866483, 0.00000000)
+            controlPoint1: TOP_LEFT(0.86840701, 0.00000000)
+            controlPoint2: TOP_LEFT(1.08849299, 0.00000000)];
+    [path closePath];
+    
+    [s_cache setObject:path forKey:key];
+    
+    return path.CGPath;
+}
+
+@implementation YSImageFilter
+
+#pragma mark - resize
+
++ (UIImage *)fastResizeWithImage:(UIImage *)image size:(CGSize)newSize trimToFit:(BOOL)trimToFit mask:(YSImageFilterMask)mask
+{
+    return [self resizeWithImage:image size:newSize quality:kCGInterpolationLow trimToFit:trimToFit mask:mask];
+}
+
++ (UIImage *)highQualityResizeWithImage:(UIImage *)image size:(CGSize)newSize trimToFit:(BOOL)trimToFit mask:(YSImageFilterMask)mask
+{
+    return [self resizeWithImage:image size:newSize quality:kCGInterpolationHigh trimToFit:trimToFit mask:mask];
+}
+
++ (UIImage*)resizeWithImage:(UIImage*)sourceImage
+                       size:(CGSize)targetSize
+                    quality:(CGInterpolationQuality)quality
+                  trimToFit:(BOOL)trimToFit
+                       mask:(YSImageFilterMask)mask
+{
+    CGSize sourceImageSize = sourceImage.size;
+    LOG_YSIMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImageSize));
+    if (sourceImageSize.height < 1 || sourceImageSize.width < 1 ||
+        targetSize.height < 1 || targetSize.width < 1) {
+        return nil;
+    }
+
+    CGRect projectTo;
+    CGSize newSize;
+    if (CGSizeEqualToSize(sourceImage.size, targetSize)) {
+        projectTo = CGRectMake(0.f, 0.f, targetSize.width, targetSize.height);
+        newSize = targetSize;
+    } else {
+        resizedRectWithSourceImageSize(sourceImageSize, targetSize, trimToFit, &projectTo, &newSize);
+    }
+    
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.f);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetInterpolationQuality(context, quality);
+
+    if (mask != YSImageFilterMaskNone) {
+        CGContextBeginPath(context);
+        CGRect pathRect = CGRectMake(0.f, 0.f, newSize.width, newSize.height);
+        switch (mask) {
+            case YSImageFilterMaskRoundedCorners:
+                CGContextAddPath(context, iOS7RoundedCornersPath(pathRect));
+                break;
+            case YSImageFilterMaskCircle:
+                CGContextAddEllipseInRect(context, pathRect);
+                break;
+            default:
+                break;
+        }
+        CGContextClosePath(context);
+        CGContextClip(context);
+    }
+    
+    [sourceImage drawInRect:projectTo];
+    UIImage* resizedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    LOG_YSIMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
+    return resizedImage;
+}
+
 @end
-                                                                                                        

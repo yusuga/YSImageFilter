@@ -37,7 +37,7 @@
     self.targetImageView.image = nil;
 }
 
-- (void)setImageWithProcessName:(NSString*)processName process:(SetImageProcess)process size:(CGSize)size
+- (void)setImageWithProcessName:(NSString *)processName size:(CGSize)size process:(SetImageProcess)process
 {    
     __block UIImage *img;
     [YSProcessTimer startWithProcessName:processName process:^{
@@ -45,6 +45,7 @@
             img = process(self.sourceImage, size);
         }
     }];
+    NSLog(@"processed image size: %@", NSStringFromCGSize(img.size));
     self.targetImageView.image = img;
 }
 

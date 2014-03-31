@@ -8,21 +8,30 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSUInteger, YSImageFilterMask) {
+    YSImageFilterMaskNone,
+    YSImageFilterMaskRoundedCorners,
+    YSImageFilterMaskCircle,
+};
+
 @interface YSImageFilter : NSObject
 
 /* Resize */
 
 + (UIImage*)fastResizeWithImage:(UIImage*)image
                            size:(CGSize)newSize
-                      trimToFit:(BOOL)trimToFit;
+                      trimToFit:(BOOL)trimToFit
+                           mask:(YSImageFilterMask)mask;
 
 + (UIImage*)highQualityResizeWithImage:(UIImage*)image
                                   size:(CGSize)newSize
-                             trimToFit:(BOOL)trimToFit;
+                             trimToFit:(BOOL)trimToFit
+                                  mask:(YSImageFilterMask)mask;
 
 + (UIImage*)resizeWithImage:(UIImage*)sourceImage
                        size:(CGSize)targetSize
                     quality:(CGInterpolationQuality)quality
-                  trimToFit:(BOOL)trimToFit;
+                  trimToFit:(BOOL)trimToFit
+                       mask:(YSImageFilterMask)mask;;
 
 @end

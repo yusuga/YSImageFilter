@@ -107,7 +107,7 @@ typedef NS_ENUM(NSUInteger, Row) {
             }
             processName = [NSString stringWithFormat:@"set CoreGraphics(%@)", qualityStr];
             setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
-                return [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit];
+                return [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit mask:YSImageFilterMaskNone];
             };
         }
             break;
@@ -144,12 +144,12 @@ typedef NS_ENUM(NSUInteger, Row) {
     processName = [processName stringByAppendingFormat:@" - %@", trimToFit ? @"trimToFit" : @"aspect fit resize"];
     cell.accessoryView = [[SelectView alloc] initWithDidPushSmallSizeButton:^{
         [self setImageWithProcessName:[processName stringByAppendingString:@" - small size"]
-                              process:setImageProcess
-                                 size:self.sizeSmall];
+                                 size:self.sizeSmall
+                              process:setImageProcess];
     } didPushFitSizeButton:^{
         [self setImageWithProcessName:[processName stringByAppendingString:@" - fit size"]
-                              process:setImageProcess
-                                 size:self.sizeFit];
+                                 size:self.sizeFit
+                              process:setImageProcess];
     }];
 }
 

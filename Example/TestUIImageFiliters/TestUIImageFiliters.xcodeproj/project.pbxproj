@@ -12,6 +12,8 @@
 		B81B75AC18E5C83100E822F0 /* SepiaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B81B75AB18E5C83100E822F0 /* SepiaViewController.m */; };
 		B81B75AE18E5E17800E822F0 /* TestSepia.m in Sources */ = {isa = PBXBuildFile; fileRef = B81B75AD18E5E17800E822F0 /* TestSepia.m */; };
 		B81B75B018E5E3A700E822F0 /* TestSepiaPerformance.m in Sources */ = {isa = PBXBuildFile; fileRef = B81B75AF18E5E3A600E822F0 /* TestSepiaPerformance.m */; };
+		B8814D9C18E916890041A7A5 /* MaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814D9B18E916890041A7A5 /* MaskViewController.m */; };
+		B8814D9F18E916D00041A7A5 /* ExclusiveSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814D9E18E916D00041A7A5 /* ExclusiveSelectionViewController.m */; };
 		B8CE5CAA18E4849C00268B7C /* TestResize.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CE5CA918E4849C00268B7C /* TestResize.m */; };
 		B8CE5CAD18E485F100268B7C /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CE5CAC18E485F100268B7C /* Utility.m */; };
 		B8D734B818E29DFC004850C0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8D734B718E29DFC004850C0 /* Foundation.framework */; };
@@ -55,6 +57,10 @@
 		B81B75AB18E5C83100E822F0 /* SepiaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SepiaViewController.m; sourceTree = "<group>"; };
 		B81B75AD18E5E17800E822F0 /* TestSepia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestSepia.m; sourceTree = "<group>"; };
 		B81B75AF18E5E3A600E822F0 /* TestSepiaPerformance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestSepiaPerformance.m; sourceTree = "<group>"; };
+		B8814D9A18E916890041A7A5 /* MaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskViewController.h; sourceTree = "<group>"; };
+		B8814D9B18E916890041A7A5 /* MaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaskViewController.m; sourceTree = "<group>"; };
+		B8814D9D18E916D00041A7A5 /* ExclusiveSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusiveSelectionViewController.h; sourceTree = "<group>"; };
+		B8814D9E18E916D00041A7A5 /* ExclusiveSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExclusiveSelectionViewController.m; sourceTree = "<group>"; };
 		B8CE5CA918E4849C00268B7C /* TestResize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestResize.m; sourceTree = "<group>"; };
 		B8CE5CAB18E485F100268B7C /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
 		B8CE5CAC18E485F100268B7C /* Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utility.m; sourceTree = "<group>"; };
@@ -166,6 +172,10 @@
 				B8D734ED18E29F19004850C0 /* FiltersViewController.m */,
 				B8D734F918E353F3004850C0 /* ResizeViewController.h */,
 				B8D734FA18E353F3004850C0 /* ResizeViewController.m */,
+				B8814D9D18E916D00041A7A5 /* ExclusiveSelectionViewController.h */,
+				B8814D9E18E916D00041A7A5 /* ExclusiveSelectionViewController.m */,
+				B8814D9A18E916890041A7A5 /* MaskViewController.h */,
+				B8814D9B18E916890041A7A5 /* MaskViewController.m */,
 				B81B75AA18E5C83100E822F0 /* SepiaViewController.h */,
 				B81B75AB18E5C83100E822F0 /* SepiaViewController.m */,
 				B8D7350218E3AD0A004850C0 /* SelectView.xib */,
@@ -373,6 +383,8 @@
 				B8D734C818E29DFC004850C0 /* AppDelegate.m in Sources */,
 				B8D7350618E3B6BA004850C0 /* FiltersTopViewController.m in Sources */,
 				B8D734EE18E29F19004850C0 /* FiltersViewController.m in Sources */,
+				B8814D9F18E916D00041A7A5 /* ExclusiveSelectionViewController.m in Sources */,
+				B8814D9C18E916890041A7A5 /* MaskViewController.m in Sources */,
 				B8D734FB18E353F3004850C0 /* ResizeViewController.m in Sources */,
 				B81B75AC18E5C83100E822F0 /* SepiaViewController.m in Sources */,
 				B8D734C418E29DFC004850C0 /* main.m in Sources */,

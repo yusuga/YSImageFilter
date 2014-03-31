@@ -14,41 +14,11 @@ typedef NS_ENUM(NSUInteger, Row) {
     RowSepiaGPUImage,
 };
 
-@interface SepiaViewController ()
-
-@end
-
 @implementation SepiaViewController
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
-- (void)setTargetImageView:(UIImageView *)targetImageView
-{
-    [super setTargetImageView:targetImageView];
-    if (!self.isViewLoaded) {
-        [self performSelector:@selector(view)];
-    }
-    self.sourceImage = [ImageFilter resizeInCoreImageWithImage:self.sourceImage
-                                                          size:targetImageView.bounds.size
-                                                        useGPU:YES
-                                                     trimToFit:YES];
-}
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    cell.accessoryType = UITableViewCellAccessoryNone;
-}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView reloadData];
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
     
     NSString *processName;
     SetImageProcess setImageProcess;
@@ -77,8 +47,8 @@ typedef NS_ENUM(NSUInteger, Row) {
     }
     
     [self setImageWithProcessName:processName
-                          process:setImageProcess
-                             size:self.sourceImage.size];
+                             size:self.sourceImage.size
+                          process:setImageProcess];
 }
 
 @end

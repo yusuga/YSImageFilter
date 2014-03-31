@@ -35,6 +35,12 @@
 - (void)testAllAverageWithImage1000x1000to300x300
 {
     [self allAverageWithImage:[Utility imageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
+    return;
+#if 1
+    [self allAverageWithImage:[Utility imageWithSize:CGSizeMake(500.f, 500.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
+#else
+    [self allAverageWithImage:[Utility catImage500x500] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
+#endif
 }
 
 - (void)testAllAverageTrimToFitWithImage1000x1000to300x300
@@ -91,10 +97,10 @@
 {
     /* Idling */
     // CoreGraphics
-    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationNone trimToFit:trimToFit];
-    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationLow trimToFit:trimToFit];
-    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationMedium trimToFit:trimToFit];
-    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationHigh trimToFit:trimToFit];
+    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationNone trimToFit:trimToFit mask:YSImageFilterMaskNone];
+    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationLow trimToFit:trimToFit mask:YSImageFilterMaskNone];
+    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationMedium trimToFit:trimToFit mask:YSImageFilterMaskNone];
+    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationHigh trimToFit:trimToFit mask:YSImageFilterMaskNone];
     
     // NYXImagesKit
     [ImageFilter resizeInNYXImagesKitWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
@@ -174,7 +180,7 @@ CoreImage(GPU) %f (%@ FPS)\n\n",
     }
     NSString *name = [NSString stringWithFormat:@"average CoreGraphics(%@), resize: %@", qualityStr, NSStringFromCGSize(size)];
     return [YSProcessTimer startAverageWithProcessName:name numberOfTrials:kNumberOfTrials process:^{
-        [YSImageFilter resizeWithImage:image size:size quality:quality trimToFit:trimToFit];
+        [YSImageFilter resizeWithImage:image size:size quality:quality trimToFit:trimToFit mask:YSImageFilterMaskNone];
     }];
 }
 
