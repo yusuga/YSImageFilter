@@ -10,6 +10,7 @@
 #import "Utility.h"
 #import "YSImageFilter.h"
 #import "ImageFilter.h"
+#import <NSRunLoop-PerformBlock/NSRunLoop+PerformBlock.h>
 
 typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 
@@ -152,16 +153,33 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
         for (NSNumber *maskNum in masks) {
             YSImageFilterMask mask = [maskNum integerValue];
             
-            if (![self validateResizedImageWithSourceImage:image resizeSize:size process:^UIImage *(UIImage *sourceImage,
-                                                                                                    CGSize resizeSize,
-                                                                                                    BOOL trimToFit)
-                  {
-                return [YSImageFilter resizeWithImage:sourceImage
-                                                 size:size
-                                              quality:quality trimToFit:trimToFit
-                                                 mask:mask];
-            }]) {
-                return NO;
+            for (NSNumber *asyncNum in @[@NO, @YES]) {
+                BOOL async = [asyncNum boolValue];
+                if (![self validateResizedImageWithSourceImage:image resizeSize:size process:^UIImage *(UIImage *sourceImage,
+                                                                                                        CGSize resizeSize,
+                                                                                                        BOOL trimToFit)
+                      {
+                          __block UIImage *resizedImage;
+                          if (async) {
+                              [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
+                                  [YSImageFilter resizeWithImage:sourceImage
+                                                            size:size
+                                                         quality:quality
+                                                       trimToFit:trimToFit mask:mask completion:^(UIImage *filterdImage) {
+                                                           resizedImage = filterdImage;
+                                                           *finish = YES;
+                                                       }];
+                              } timeoutInterval:DBL_MAX];
+                          } else {
+                              resizedImage = [YSImageFilter resizeWithImage:sourceImage
+                                                                       size:size
+                                                                    quality:quality trimToFit:trimToFit
+                                                                       mask:mask];
+                          }
+                          return resizedImage;
+                      }]) {
+                          return NO;
+                      }
             }
         }
     }
@@ -244,30 +262,41 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 {
     for (NSNumber *trimToFitNum in @[@NO, @YES]) {
         BOOL trimToFit = [trimToFitNum boolValue];
-        UIImage *resizedImage = process(sourceImage, resizeSize, trimToFit);
-        CGSize estimatedSize;
-        if (trimToFit) {
-            estimatedSize = resizeSize;
-        } else {
-            CGSize imageSize = sourceImage.size;
-            CGFloat aspectRatio = imageSize.width / imageSize.height;
-            CGFloat targetAspectRatio = resizeSize.width / resizeSize.height;
-            if (targetAspectRatio < aspectRatio) {
-                estimatedSize = CGSizeMake(resizeSize.width,
-                                           resizeSize.width / aspectRatio);
-            } else {
-                estimatedSize = CGSizeMake(resizeSize.height * aspectRatio,
-                                           resizeSize.height);
-            }
-            CGRect integralRect = CGRectZero;
-            integralRect.size = estimatedSize;
-            estimatedSize = CGRectIntegral(integralRect).size;
-        }
-        NSLog(@"estimatedSize: %@", NSStringFromCGSize(estimatedSize));
-        if (![Utility validateImage:resizedImage estimatedSize:estimatedSize]) {
-            XCTFail(@"image.size: %@, resize: %@, estimatedSize: %@, resizedImage.size: %@", NSStringFromCGSize(sourceImage.size), NSStringFromCGSize(resizeSize), NSStringFromCGSize(estimatedSize), NSStringFromCGSize(resizedImage.size));
+        if (![self validateResizedImage:process(sourceImage, resizeSize, trimToFit)
+                             resizeSize:resizeSize
+                        sourceImageSize:sourceImage.size
+                              trimToFit:trimToFit])
+        {
             return NO;
         }
+    }
+    return YES;
+}
+
+- (BOOL)validateResizedImage:(UIImage*)resizedImage resizeSize:(CGSize)resizeSize sourceImageSize:(CGSize)sourceImageSize trimToFit:(BOOL)trimToFit
+{
+    CGSize estimatedSize;
+    if (trimToFit) {
+        estimatedSize = resizeSize;
+    } else {
+        CGSize imageSize = sourceImageSize;
+        CGFloat aspectRatio = imageSize.width / imageSize.height;
+        CGFloat targetAspectRatio = resizeSize.width / resizeSize.height;
+        if (targetAspectRatio < aspectRatio) {
+            estimatedSize = CGSizeMake(resizeSize.width,
+                                       resizeSize.width / aspectRatio);
+        } else {
+            estimatedSize = CGSizeMake(resizeSize.height * aspectRatio,
+                                       resizeSize.height);
+        }
+        CGRect integralRect = CGRectZero;
+        integralRect.size = estimatedSize;
+        estimatedSize = CGRectIntegral(integralRect).size;
+    }
+    NSLog(@"estimatedSize: %@", NSStringFromCGSize(estimatedSize));
+    if (![Utility validateImage:resizedImage estimatedSize:estimatedSize]) {
+        XCTFail(@"image.size: %@, resize: %@, estimatedSize: %@, resizedImage.size: %@", NSStringFromCGSize(sourceImageSize), NSStringFromCGSize(resizeSize), NSStringFromCGSize(estimatedSize), NSStringFromCGSize(resizedImage.size));
+        return NO;
     }
     return YES;
 }

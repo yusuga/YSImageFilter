@@ -34,32 +34,41 @@
 
 - (void)testAllAverageWithImage1000x1000to300x300
 {
-    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
-    return;
-#if 1
-    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(500.f, 500.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
-#else
-    [self allAverageWithImage:[Utility catImage500x500] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
-#endif
+    [self allAverageWithSourceImageSize:CGSizeMake(1000.f, 1000.f) resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
 }
 
 - (void)testAllAverageTrimToFitWithImage1000x1000to300x300
 {
-    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(300.f, 300.f) trimToFit:YES];
+    [self allAverageWithSourceImageSize:CGSizeMake(1000.f, 1000.f) resizeSize:CGSizeMake(300.f, 300.f) trimToFit:YES];
 }
 
 - (void)testAllAverageWithImage1000x1000To50x50
 {
-    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(50.f, 50.f) trimToFit:NO];
+    [self allAverageWithSourceImageSize:CGSizeMake(1000.f, 1000.f) resizeSize:CGSizeMake(50.f, 50.f) trimToFit:NO];
 }
 
 - (void)testAllAverageTrimToFitWithImage1000x1000To50x50
 {
-    [self allAverageWithImage:[Utility solidColorImageWithSize:CGSizeMake(1000.f, 1000.f)] resizeSize:CGSizeMake(50.f, 50.f) trimToFit:YES];
+    [self allAverageWithSourceImageSize:CGSizeMake(1000.f, 1000.f) resizeSize:CGSizeMake(50.f, 50.f) trimToFit:YES];
+}
+
+- (void)allAverageWithSourceImageSize:(CGSize)sourceImageSize resizeSize:(CGSize)resizeSize trimToFit:(BOOL)trimToFit
+{
+    [self allAverageWithSourceImageName:@"SolidColor"
+                                  image:[Utility solidColorImageWithSize:sourceImageSize]
+                             resizeSize:resizeSize
+                              trimToFit:trimToFit];
+    
+    
+    [self allAverageWithSourceImageName:@"Cat"
+                                  image:[Utility catImageWithSize:sourceImageSize]
+                             resizeSize:resizeSize
+                              trimToFit:trimToFit];
 }
 
 #pragma mark - cpu busy
 
+#if 0
 - (void)testCPUBusy
 {
     [self enumeratePrimeInBackground:10];
@@ -90,10 +99,11 @@
     }
     return YES;
 }
+#endif
 
 #pragma mark - average
 
-- (void)allAverageWithImage:(UIImage*)sourceImage resizeSize:(CGSize)resizeSize trimToFit:(BOOL)trimToFit
+- (void)allAverageWithSourceImageName:(NSString*)sourceImageName image:(UIImage*)sourceImage resizeSize:(CGSize)resizeSize trimToFit:(BOOL)trimToFit
 {
     /* Idling */
     // CoreGraphics
@@ -122,7 +132,7 @@
     NSTimeInterval ciImageTimeGPU = [self averageCoreImageWithImage:sourceImage size:resizeSize useGPU:YES trimToFit:trimToFit];
 
     NSLog(@"\n\n\
-sourceImage.size: %@, resizeSize: %@, trimToFit: %@, numberOfTrials: %@\n\
+name: %@, sourceImage.size: %@, resizeSize: %@, trimToFit: %@, numberOfTrials: %@\n\
 CoreGraphics(None) %f (%@ FPS)\n\
 CoreGraphics(Low) %f (%@ FPS)\n\
 CoreGraphics(Mid) %f (%@ FPS)\n\
@@ -131,6 +141,7 @@ NYXImagesKit %f (%@ FPS)\n\
 GPUImage %f (%@ FPS)\n\
 CoreImage(CPU) %f (%@ FPS)\n\
 CoreImage(GPU) %f (%@ FPS)\n\n",
+          sourceImageName,
           NSStringFromCGSize(sourceImage.size),
           NSStringFromCGSize(resizeSize),
           trimToFit ? @"YES" : @"NO",

@@ -7,10 +7,12 @@
 //
 
 #import "ResizeViewController.h"
+#import <NSRunLoop-PerformBlock/NSRunLoop+PerformBlock.h>
 
 typedef NS_ENUM(NSUInteger, Row) {
     RowResizeSimpleCoreGraphicsNone,
     RowResizeSimpleCoreGraphicsLow,
+    RowResizeSimpleCoreGraphicsMedium,
     RowResizeSimpleCoreGraphicsHigh,
     RowResizeNYXImagesKit,
     RowResizeGPUImage,
@@ -23,6 +25,7 @@ typedef NS_ENUM(NSUInteger, Row) {
 @property (nonatomic) CGSize sizeSmall;
 @property (nonatomic) CGSize sizeFit;
 
+@property (nonatomic) UISwitch *backgroundSwitch;
 @property (nonatomic) UISwitch *trimSwitch;
 
 @end
@@ -44,10 +47,20 @@ typedef NS_ENUM(NSUInteger, Row) {
     
     self.sizeSmall = CGSizeMake(50.f, 50.f);
     
+    UILabel *bgLabel = [[UILabel alloc] init];
+    bgLabel.text = @"BG";
+    [bgLabel sizeToFit];
+    
     UILabel *trimLabel = [[UILabel alloc] init];
     trimLabel.text = @"trimToFit";
-    trimLabel.textColor = [UIColor darkGrayColor];
     [trimLabel sizeToFit];
+    
+    bgLabel.textColor = trimLabel.textColor = [UIColor darkGrayColor];
+    
+    UISwitch *bgSwitch = [[UISwitch alloc] init];
+    bgSwitch.on = NO;
+    [bgSwitch addTarget:self action:@selector(backgroundSwitchDidChange:) forControlEvents:UIControlEventValueChanged];
+    self.backgroundSwitch = bgSwitch;
     
     UISwitch *trimSwitch = [[UISwitch alloc] init];
     trimSwitch.on = NO;
@@ -55,7 +68,9 @@ typedef NS_ENUM(NSUInteger, Row) {
     self.trimSwitch = trimSwitch;
     
     self.navigationItem.rightBarButtonItems = @[[[UIBarButtonItem alloc] initWithCustomView:trimSwitch],
-                                                [[UIBarButtonItem alloc] initWithCustomView:trimLabel]];
+                                                [[UIBarButtonItem alloc] initWithCustomView:trimLabel],
+                                                [[UIBarButtonItem alloc] initWithCustomView:bgSwitch],
+                                                [[UIBarButtonItem alloc] initWithCustomView:bgLabel]];
 }
 
 - (void)setTargetImageView:(UIImageView *)targetImageView
@@ -64,9 +79,14 @@ typedef NS_ENUM(NSUInteger, Row) {
     self.sizeFit = targetImageView.bounds.size;
 }
 
-- (void)trimSwitchDidChange:(UISwitch*)trimSwitch
+- (void)trimSwitchDidChange:(id)sender
 {
 //    [self clearImageView];
+    [self.tableView reloadData];
+}
+
+- (void)backgroundSwitchDidChange:(id)sender
+{
     [self.tableView reloadData];
 }
 
@@ -84,6 +104,7 @@ typedef NS_ENUM(NSUInteger, Row) {
     switch (indexPath.row) {
         case RowResizeSimpleCoreGraphicsNone:
         case RowResizeSimpleCoreGraphicsLow:
+        case RowResizeSimpleCoreGraphicsMedium:
         case RowResizeSimpleCoreGraphicsHigh:
         {
             CGInterpolationQuality quality;
@@ -97,6 +118,10 @@ typedef NS_ENUM(NSUInteger, Row) {
                     quality = kCGInterpolationLow;
                     qualityStr = @"Low";
                     break;
+                case RowResizeSimpleCoreGraphicsMedium:
+                    quality = kCGInterpolationMedium;
+                    qualityStr = @"Medium";
+                    break;
                 case RowResizeSimpleCoreGraphicsHigh:
                     quality = kCGInterpolationHigh;
                     qualityStr = @"High";
@@ -106,8 +131,20 @@ typedef NS_ENUM(NSUInteger, Row) {
                     break;
             }
             processName = [NSString stringWithFormat:@"set CoreGraphics(%@)", qualityStr];
+            BOOL async = self.backgroundSwitch.on;
             setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
-                return [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit mask:YSImageFilterMaskNone];
+                __block UIImage *resizedImage;
+                if (async) {
+                    [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
+                        [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit mask:YSImageFilterMaskNone completion:^(UIImage *filterdImage) {
+                            resizedImage = filterdImage;
+                            *finish = YES;
+                        }];
+                    } timeoutInterval:DBL_MAX];
+                } else {
+                    resizedImage = [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit mask:YSImageFilterMaskNone];
+                }
+                return resizedImage;
             };
         }
             break;
