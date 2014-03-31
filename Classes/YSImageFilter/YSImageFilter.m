@@ -10,7 +10,7 @@
 @import CoreImage;
 
 #if DEBUG
-    #if 1
+    #if 0
         #define LOG_YSIMAGE_FILTER(...) NSLog(__VA_ARGS__)
     #endif
 #endif
@@ -187,16 +187,56 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
 
 @implementation YSImageFilter
 
-#pragma mark - resize
-
-+ (UIImage *)fastResizeWithImage:(UIImage *)image size:(CGSize)newSize trimToFit:(BOOL)trimToFit mask:(YSImageFilterMask)mask
++ (dispatch_queue_t)filterDispatchQueue
 {
-    return [self resizeWithImage:image size:newSize quality:kCGInterpolationLow trimToFit:trimToFit mask:mask];
+    static dispatch_queue_t s_queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_queue = dispatch_queue_create("jp.YuSugawara.YSImageFilter.queue", NULL);
+    });
+    return s_queue;
 }
 
-+ (UIImage *)highQualityResizeWithImage:(UIImage *)image size:(CGSize)newSize trimToFit:(BOOL)trimToFit mask:(YSImageFilterMask)mask
+#pragma mark - resize
+
++ (void)fastResizeWithImage:(UIImage *)image
+                       size:(CGSize)newSize
+                  trimToFit:(BOOL)trimToFit
+                       mask:(YSImageFilterMask)mask
+                 completion:(YSImageFilterComletion)completion
 {
-    return [self resizeWithImage:image size:newSize quality:kCGInterpolationHigh trimToFit:trimToFit mask:mask];
+    [self resizeWithImage:image size:newSize quality:kCGInterpolationLow trimToFit:trimToFit mask:mask completion:completion];
+}
+
++ (void)mediumQualityResizeWithImage:(UIImage *)image
+                                size:(CGSize)newSize
+                           trimToFit:(BOOL)trimToFit
+                                mask:(YSImageFilterMask)mask
+                          completion:(YSImageFilterComletion)completion
+{
+    [self resizeWithImage:image size:newSize quality:kCGInterpolationMedium trimToFit:trimToFit mask:mask completion:completion];
+}
+
++ (void)highQualityResizeWithImage:(UIImage*)image
+                              size:(CGSize)newSize
+                         trimToFit:(BOOL)trimToFit
+                              mask:(YSImageFilterMask)mask
+                        completion:(YSImageFilterComletion)completion;
+{
+    [self resizeWithImage:image size:newSize quality:kCGInterpolationHigh trimToFit:trimToFit mask:mask completion:completion];
+}
+
++ (void)resizeWithImage:(UIImage*)sourceImage
+                   size:(CGSize)targetSize
+                quality:(CGInterpolationQuality)quality
+              trimToFit:(BOOL)trimToFit
+                   mask:(YSImageFilterMask)mask
+             completion:(YSImageFilterComletion)completion;
+{
+    dispatch_async([self filterDispatchQueue], ^{
+        UIImage *filterdImage = [self resizeWithImage:sourceImage size:targetSize quality:quality trimToFit:trimToFit mask:mask];
+        if (completion) completion(filterdImage);
+    });
 }
 
 + (UIImage*)resizeWithImage:(UIImage*)sourceImage

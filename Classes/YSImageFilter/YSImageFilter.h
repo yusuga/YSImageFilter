@@ -14,24 +14,41 @@ typedef NS_ENUM(NSUInteger, YSImageFilterMask) {
     YSImageFilterMaskCircle,
 };
 
+typedef void(^YSImageFilterComletion)(UIImage *filterdImage);
+
 @interface YSImageFilter : NSObject
 
 /* Resize */
 
-+ (UIImage*)fastResizeWithImage:(UIImage*)image
-                           size:(CGSize)newSize
-                      trimToFit:(BOOL)trimToFit
-                           mask:(YSImageFilterMask)mask;
++ (void)fastResizeWithImage:(UIImage*)image
+                       size:(CGSize)newSize
+                  trimToFit:(BOOL)trimToFit
+                       mask:(YSImageFilterMask)mask
+                 completion:(YSImageFilterComletion)completion;
 
-+ (UIImage*)highQualityResizeWithImage:(UIImage*)image
-                                  size:(CGSize)newSize
-                             trimToFit:(BOOL)trimToFit
-                                  mask:(YSImageFilterMask)mask;
++ (void)mediumQualityResizeWithImage:(UIImage*)image
+                                size:(CGSize)newSize
+                           trimToFit:(BOOL)trimToFit
+                                mask:(YSImageFilterMask)mask
+                          completion:(YSImageFilterComletion)completion;
+
++ (void)highQualityResizeWithImage:(UIImage*)image
+                              size:(CGSize)newSize
+                         trimToFit:(BOOL)trimToFit
+                              mask:(YSImageFilterMask)mask
+                        completion:(YSImageFilterComletion)completion;
+
++ (void)resizeWithImage:(UIImage*)sourceImage
+                   size:(CGSize)targetSize
+                quality:(CGInterpolationQuality)quality
+              trimToFit:(BOOL)trimToFit
+                   mask:(YSImageFilterMask)mask
+             completion:(YSImageFilterComletion)completion;
 
 + (UIImage*)resizeWithImage:(UIImage*)sourceImage
                        size:(CGSize)targetSize
                     quality:(CGInterpolationQuality)quality
                   trimToFit:(BOOL)trimToFit
-                       mask:(YSImageFilterMask)mask;;
+                       mask:(YSImageFilterMask)mask;
 
 @end
