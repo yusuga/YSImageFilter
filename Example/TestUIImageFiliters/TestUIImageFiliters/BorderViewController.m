@@ -8,42 +8,52 @@
 
 #import "BorderViewController.h"
 
-@interface BorderViewController ()
-
-@end
+typedef NS_ENUM(NSUInteger, Row) {
+    RowMaskNone,
+    RowMaskRoundedCorners,
+    RowMaskCircle,
+};
 
 @implementation BorderViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+    
+    NSString *processName;
+    YSImageFilterMask mask;
+    switch (indexPath.row) {
+        case RowMaskNone:
+            processName = @"mask none";
+            mask = YSImageFilterMaskNone;
+            break;
+        case RowMaskRoundedCorners:
+            processName = @"mask rounded corners";
+            mask = YSImageFilterMaskRoundedCorners;
+            break;
+        case RowMaskCircle:
+            processName = @"mask circle";
+            mask = YSImageFilterMaskCircle;
+            break;
+        default:
+            abort();
+            break;
     }
-    return self;
+    
+    UIImage *sourceImage = self.sourceImage;
+    CGFloat minSize = MIN(sourceImage.size.width, sourceImage.size.height);
+    [self setImageWithProcessName:processName
+                             size:CGSizeMake(minSize, minSize)
+                          process:^UIImage *(UIImage *sourceImage, CGSize size) {
+                              return [YSImageFilter resizeWithImage:sourceImage
+                                                               size:size
+                                                            quality:kCGInterpolationHigh
+                                                          trimToFit:YES
+                                                               mask:mask
+                                                        borderWidth:5.f
+                                                        borderColor:[UIColor redColor]];
+                          }];
+    
 }
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
