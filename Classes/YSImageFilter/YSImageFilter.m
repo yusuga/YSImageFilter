@@ -235,7 +235,9 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
 {
     dispatch_async([self filterDispatchQueue], ^{
         UIImage *filterdImage = [self resizeWithImage:sourceImage size:targetSize quality:quality trimToFit:trimToFit mask:mask];
-        if (completion) completion(filterdImage);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completion) completion(filterdImage);
+        });
     });
 }
 
