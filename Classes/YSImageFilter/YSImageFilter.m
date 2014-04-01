@@ -19,7 +19,6 @@
     #define LOG_YSIMAGE_FILTER(...)
 #endif
 
-
 /*
  GTMUIImage+Resize.m
  Copyright 2009 Google Inc.
@@ -92,6 +91,8 @@ static inline void resizedRectWithSourceImageSize(CGSize sourceImageSize,
 
 #pragma mark - iOS7 RoundedRect
 
+/* http://www.paintcodeapp.com/blogpost/code-for-ios-7-rounded-rectangles */
+
 #define TOP_LEFT(X, Y)\
     CGPointMake(rect.origin.x + X * limitedRadius,\
     rect.origin.y + Y * limitedRadius)
@@ -125,8 +126,6 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
     if (path) {
         return path.CGPath;
     }
-    
-    /* http://www.paintcodeapp.com/blogpost/code-for-ios-7-rounded-rectangles */
     
     CGFloat radius = rect.size.width * kCornerRadiusRatio;
     path = UIBezierPath.bezierPath;
@@ -185,6 +184,28 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
     return path.CGPath;
 }
 
+#pragma mark - path
+
+static inline void addMaskPath(CGContextRef context, CGSize size, YSImageFilterMask mask)
+{
+    CGContextBeginPath(context);
+    CGRect rect = CGRectMake(0.f, 0.f, size.width, size.height);
+    switch (mask) {
+        case YSImageFilterMaskNone:
+            CGContextAddRect(context, rect);
+            break;
+        case YSImageFilterMaskRoundedCorners:
+            CGContextAddPath(context, iOS7RoundedCornersPath(rect));
+            break;
+        case YSImageFilterMaskCircle:
+            CGContextAddEllipseInRect(context, rect);
+            break;
+        default:
+            break;
+    }
+    CGContextClosePath(context);
+}
+
 @implementation YSImageFilter
 
 + (dispatch_queue_t)filterDispatchQueue
@@ -199,33 +220,6 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
 
 #pragma mark - resize
 
-+ (void)fastResizeWithImage:(UIImage *)image
-                       size:(CGSize)newSize
-                  trimToFit:(BOOL)trimToFit
-                       mask:(YSImageFilterMask)mask
-                 completion:(YSImageFilterComletion)completion
-{
-    [self resizeWithImage:image size:newSize quality:kCGInterpolationLow trimToFit:trimToFit mask:mask completion:completion];
-}
-
-+ (void)mediumQualityResizeWithImage:(UIImage *)image
-                                size:(CGSize)newSize
-                           trimToFit:(BOOL)trimToFit
-                                mask:(YSImageFilterMask)mask
-                          completion:(YSImageFilterComletion)completion
-{
-    [self resizeWithImage:image size:newSize quality:kCGInterpolationMedium trimToFit:trimToFit mask:mask completion:completion];
-}
-
-+ (void)highQualityResizeWithImage:(UIImage*)image
-                              size:(CGSize)newSize
-                         trimToFit:(BOOL)trimToFit
-                              mask:(YSImageFilterMask)mask
-                        completion:(YSImageFilterComletion)completion;
-{
-    [self resizeWithImage:image size:newSize quality:kCGInterpolationHigh trimToFit:trimToFit mask:mask completion:completion];
-}
-
 + (void)resizeWithImage:(UIImage*)sourceImage
                    size:(CGSize)targetSize
                 quality:(CGInterpolationQuality)quality
@@ -233,8 +227,33 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
                    mask:(YSImageFilterMask)mask
              completion:(YSImageFilterComletion)completion;
 {
+    [self resizeWithImage:sourceImage
+                     size:targetSize
+                  quality:quality
+                trimToFit:trimToFit
+                     mask:mask
+              borderWidth:0.f
+              borderColor:nil
+               completion:completion];
+}
+
++ (void)resizeWithImage:(UIImage*)sourceImage
+                   size:(CGSize)targetSize
+                quality:(CGInterpolationQuality)quality
+              trimToFit:(BOOL)trimToFit
+                   mask:(YSImageFilterMask)mask
+            borderWidth:(CGFloat)borderWidth
+            borderColor:(UIColor*)borderColor
+             completion:(YSImageFilterComletion)completion;
+{
     dispatch_async([self filterDispatchQueue], ^{
-        UIImage *filterdImage = [self resizeWithImage:sourceImage size:targetSize quality:quality trimToFit:trimToFit mask:mask];
+        UIImage *filterdImage = [self resizeWithImage:sourceImage
+                                                 size:targetSize
+                                              quality:quality
+                                            trimToFit:trimToFit
+                                                 mask:mask
+                                          borderWidth:borderWidth
+                                          borderColor:borderColor];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completion) completion(filterdImage);
         });
@@ -246,6 +265,23 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
                     quality:(CGInterpolationQuality)quality
                   trimToFit:(BOOL)trimToFit
                        mask:(YSImageFilterMask)mask
+{
+    return [self resizeWithImage:sourceImage
+                            size:targetSize
+                         quality:quality
+                       trimToFit:trimToFit
+                            mask:mask
+                     borderWidth:0.f
+                     borderColor:nil];
+}
+
++ (UIImage*)resizeWithImage:(UIImage*)sourceImage
+                       size:(CGSize)targetSize
+                    quality:(CGInterpolationQuality)quality
+                  trimToFit:(BOOL)trimToFit
+                       mask:(YSImageFilterMask)mask
+                borderWidth:(CGFloat)borderWidth
+                borderColor:(UIColor*)borderColor
 {
     CGSize sourceImageSize = sourceImage.size;
     LOG_YSIMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImageSize));
@@ -268,24 +304,21 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
     CGContextSetInterpolationQuality(context, quality);
 
     if (mask != YSImageFilterMaskNone) {
-        CGContextBeginPath(context);
-        CGRect pathRect = CGRectMake(0.f, 0.f, newSize.width, newSize.height);
-        switch (mask) {
-            case YSImageFilterMaskRoundedCorners:
-                CGContextAddPath(context, iOS7RoundedCornersPath(pathRect));
-                break;
-            case YSImageFilterMaskCircle:
-                CGContextAddEllipseInRect(context, pathRect);
-                break;
-            default:
-                break;
-        }
-        CGContextClosePath(context);
+        addMaskPath(context, newSize, mask);
         CGContextClip(context);
     }
     
     [sourceImage drawInRect:projectTo];
+
+    if (borderWidth > 0.f && borderColor != nil) {
+        addMaskPath(context, newSize, mask);
+        CGContextSetLineWidth(context, borderWidth);
+        CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
+        CGContextStrokePath(context);
+    }
+    
     UIImage* resizedImage = UIGraphicsGetImageFromCurrentImageContext();
+    
     UIGraphicsEndImageContext();
     LOG_YSIMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
     return resizedImage;
