@@ -227,7 +227,7 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
 }
 
 #pragma mark - resize
-
+#pragma mark async
 + (void)resizeWithImage:(UIImage*)sourceImage
                    size:(CGSize)targetSize
                 quality:(CGInterpolationQuality)quality
@@ -254,6 +254,26 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
             borderColor:(UIColor*)borderColor
              completion:(YSImageFilterComletion)completion;
 {
+    [self resizeWithImage:sourceImage
+                     size:targetSize
+                  quality:quality
+                trimToFit:trimToFit
+                     mask:mask
+              borderWidth:borderWidth
+              borderColor:borderColor
+         maskCornerRadius:0.f];
+}
+
++ (void)resizeWithImage:(UIImage*)sourceImage
+                   size:(CGSize)targetSize
+                quality:(CGInterpolationQuality)quality
+              trimToFit:(BOOL)trimToFit
+                   mask:(YSImageFilterMask)mask
+            borderWidth:(CGFloat)borderWidth
+            borderColor:(UIColor*)borderColor
+       maskCornerRadius:(CGFloat)maskCornerRadius
+             completion:(YSImageFilterComletion)completion
+{
     dispatch_async([self filterDispatchQueue], ^{
         UIImage *filterdImage = [self resizeWithImage:sourceImage
                                                  size:targetSize
@@ -261,12 +281,15 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
                                             trimToFit:trimToFit
                                                  mask:mask
                                           borderWidth:borderWidth
-                                          borderColor:borderColor];
+                                          borderColor:borderColor
+                                     maskCornerRadius:maskCornerRadius];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completion) completion(filterdImage);
         });
     });
 }
+
+#pragma mark sync
 
 + (UIImage*)resizeWithImage:(UIImage*)sourceImage
                        size:(CGSize)targetSize

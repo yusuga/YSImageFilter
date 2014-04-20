@@ -37,6 +37,16 @@ typedef void(^YSImageFilterComletion)(UIImage *filterdImage);
             borderColor:(UIColor*)borderColor
              completion:(YSImageFilterComletion)completion;
 
++ (void)resizeWithImage:(UIImage*)sourceImage
+                   size:(CGSize)targetSize
+                quality:(CGInterpolationQuality)quality
+              trimToFit:(BOOL)trimToFit
+                   mask:(YSImageFilterMask)mask
+            borderWidth:(CGFloat)borderWidth
+            borderColor:(UIColor*)borderColor
+       maskCornerRadius:(CGFloat)maskCornerRadius
+             completion:(YSImageFilterComletion)completion;
+
 + (UIImage*)resizeWithImage:(UIImage*)sourceImage
                        size:(CGSize)targetSize
                     quality:(CGInterpolationQuality)quality
