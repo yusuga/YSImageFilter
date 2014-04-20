@@ -50,4 +50,6 @@ typedef void(^YSImageFilterComletion)(UIImage *filterdImage);
                 borderWidth:(CGFloat)borderWidth
                 borderColor:(UIColor*)borderColor;
 
++ (CGPathRef)maskPathOfSize:(CGSize)size mask:(YSImageFilterMask)mask;
+
 @end

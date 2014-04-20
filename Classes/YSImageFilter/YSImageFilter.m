@@ -186,23 +186,25 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
 
 #pragma mark - path
 
-static inline void addMaskPath(CGContextRef context, CGSize size, YSImageFilterMask mask)
+static inline CGPathRef maskPath(CGSize size, YSImageFilterMask mask)
 {
-    CGContextBeginPath(context);
     CGRect rect = CGRectMake(0.f, 0.f, size.width, size.height);
     switch (mask) {
         case YSImageFilterMaskNone:
-            CGContextAddRect(context, rect);
-            break;
+            return [UIBezierPath bezierPathWithRect:rect].CGPath;
         case YSImageFilterMaskRoundedCorners:
-            CGContextAddPath(context, iOS7RoundedCornersPath(rect));
-            break;
+            return iOS7RoundedCornersPath(rect);
         case YSImageFilterMaskCircle:
-            CGContextAddEllipseInRect(context, rect);
-            break;
+            return [UIBezierPath bezierPathWithOvalInRect:rect].CGPath;
         default:
-            break;
+            return nil;
     }
+}
+
+static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef maskPath)
+{
+    CGContextBeginPath(context);
+    CGContextAddPath(context, maskPath);
     CGContextClosePath(context);
 }
 
@@ -303,15 +305,14 @@ static inline void addMaskPath(CGContextRef context, CGSize size, YSImageFilterM
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetInterpolationQuality(context, quality);
 
-    if (mask != YSImageFilterMaskNone) {
-        addMaskPath(context, newSize, mask);
-        CGContextClip(context);
-    }
+    CGPathRef path = maskPath(newSize, mask);
+    addMaskPath(context, newSize, path);
+    CGContextClip(context);
     
     [sourceImage drawInRect:projectTo];
 
     if (borderWidth > 0.f && borderColor != nil) {
-        addMaskPath(context, newSize, mask);
+        addMaskPath(context, newSize, path);
         CGContextSetLineWidth(context, borderWidth);
         CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
         CGContextStrokePath(context);
@@ -322,6 +323,11 @@ static inline void addMaskPath(CGContextRef context, CGSize size, YSImageFilterM
     UIGraphicsEndImageContext();
     LOG_YSIMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
     return resizedImage;
+}
+
++ (CGPathRef)maskPathOfSize:(CGSize)size mask:(YSImageFilterMask)mask
+{
+    return maskPath(size, mask);
 }
 
 @end
