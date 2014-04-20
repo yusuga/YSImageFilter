@@ -109,17 +109,14 @@ static inline void resizedRectWithSourceImageSize(CGSize sourceImageSize,
     CGPointMake(rect.origin.x + X * limitedRadius,\
     rect.origin.y + rect.size.height - Y * limitedRadius)
 
-static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
+static inline CGPathRef iOS7RoundedCornersPath(CGRect rect, CGFloat radius)
 {
-    /* http://scriptogr.am/jimniels/post/calculate-the-border-radius-for-ios-style-icons-using-a-simple-ratio */
-    static CGFloat kCornerRadiusRatio = 0.17544f;
-    
     static NSMutableDictionary *s_cache;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         s_cache = [NSMutableDictionary dictionary];
     });
-    NSString *key = [NSString stringWithFormat:@"%@", NSStringFromCGRect(rect)];
+    NSString *key = [NSString stringWithFormat:@"%@_%f", NSStringFromCGRect(rect), radius];
     
     UIBezierPath *path = [s_cache objectForKey:key];
     
@@ -127,7 +124,6 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
         return path.CGPath;
     }
     
-    CGFloat radius = rect.size.width * kCornerRadiusRatio;
     path = UIBezierPath.bezierPath;
     CGFloat limit = MIN(rect.size.width, rect.size.height) / 2 / 1.52866483;
     CGFloat limitedRadius = MIN(radius, limit);
@@ -186,14 +182,24 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect)
 
 #pragma mark - path
 
-static inline CGPathRef maskPath(CGSize size, YSImageFilterMask mask)
+/* http://scriptogr.am/jimniels/post/calculate-the-border-radius-for-ios-style-icons-using-a-simple-ratio */
+static CGFloat kIOS7CornerRadiusRatio = 0.17544f;
+
+static inline CGFloat iOS7CornerRadius(CGRect rect)
+{
+    return MIN(rect.size.width, rect.size.height) * kIOS7CornerRadiusRatio;
+}
+
+static inline CGPathRef maskPath(CGSize size, YSImageFilterMask mask, CGFloat radius)
 {
     CGRect rect = CGRectMake(0.f, 0.f, size.width, size.height);
     switch (mask) {
         case YSImageFilterMaskNone:
             return [UIBezierPath bezierPathWithRect:rect].CGPath;
         case YSImageFilterMaskRoundedCorners:
-            return iOS7RoundedCornersPath(rect);
+            return iOS7RoundedCornersPath(rect, radius);
+        case YSImageFilterMaskRoundedCornersIOS7RadiusRatio:
+            return iOS7RoundedCornersPath(rect, iOS7CornerRadius(rect));
         case YSImageFilterMaskCircle:
             return [UIBezierPath bezierPathWithOvalInRect:rect].CGPath;
         default:
@@ -285,6 +291,25 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
                 borderWidth:(CGFloat)borderWidth
                 borderColor:(UIColor*)borderColor
 {
+    return [self resizeWithImage:sourceImage
+                            size:targetSize
+                         quality:quality
+                       trimToFit:trimToFit
+                            mask:mask
+                     borderWidth:borderWidth
+                     borderColor:borderColor
+                maskCornerRadius:0.f];
+}
+
++ (UIImage*)resizeWithImage:(UIImage*)sourceImage
+                       size:(CGSize)targetSize
+                    quality:(CGInterpolationQuality)quality
+                  trimToFit:(BOOL)trimToFit
+                       mask:(YSImageFilterMask)mask
+                borderWidth:(CGFloat)borderWidth
+                borderColor:(UIColor*)borderColor
+           maskCornerRadius:(CGFloat)maskCornerRadius
+{
     CGSize sourceImageSize = sourceImage.size;
     LOG_YSIMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImageSize));
     if (sourceImageSize.height < 1 || sourceImageSize.width < 1 ||
@@ -305,7 +330,7 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetInterpolationQuality(context, quality);
 
-    CGPathRef path = maskPath(newSize, mask);
+    CGPathRef path = maskPath(newSize, mask, maskCornerRadius);
     addMaskPath(context, newSize, path);
     CGContextClip(context);
     
@@ -325,9 +350,11 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
     return resizedImage;
 }
 
-+ (CGPathRef)maskPathOfSize:(CGSize)size mask:(YSImageFilterMask)mask
++ (CGPathRef)maskPathOfSize:(CGSize)size
+                       mask:(YSImageFilterMask)mask
+           maskCornerRadius:(CGFloat)maskCornerRadius
 {
-    return maskPath(size, mask);
+    return maskPath(size, mask, maskCornerRadius);
 }
 
 @end
