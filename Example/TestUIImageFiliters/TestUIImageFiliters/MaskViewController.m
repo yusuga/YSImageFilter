@@ -12,6 +12,7 @@
 typedef NS_ENUM(NSUInteger, Row) {
     RowMaskNone,
     RowMaskRoundedCorners,
+    RowMaskRoundedCornersIOS7RadiusRatio,
     RowMaskCircle,
 };
 
@@ -32,6 +33,10 @@ typedef NS_ENUM(NSUInteger, Row) {
             processName = @"mask rounded corners";
             mask = YSImageFilterMaskRoundedCorners;
             break;
+        case RowMaskRoundedCornersIOS7RadiusRatio:
+            processName = @"mask rounded corners - iOS7 radisu ratio";
+            mask = YSImageFilterMaskRoundedCornersIOS7RadiusRatio;
+            break;
         case RowMaskCircle:
             processName = @"mask circle";
             mask = YSImageFilterMaskCircle;
@@ -50,7 +55,10 @@ typedef NS_ENUM(NSUInteger, Row) {
                                                                size:size
                                                             quality:kCGInterpolationHigh
                                                           trimToFit:YES
-                                                               mask:mask];
+                                                               mask:mask
+                                                        borderWidth:0.f
+                                                        borderColor:nil
+                                                   maskCornerRadius:10.f];
                           }];
 
 }
