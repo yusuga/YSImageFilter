@@ -197,10 +197,7 @@ static inline CGPathRef maskPath(CGSize size, YSImageFilterMask mask, CGFloat ra
         case YSImageFilterMaskNone:
             return [UIBezierPath bezierPathWithRect:rect].CGPath;
         case YSImageFilterMaskRoundedCorners:
-            if (radius > 0.f) {
-                return iOS7RoundedCornersPath(rect, radius);
-            }
-            // fall through
+            return iOS7RoundedCornersPath(rect, radius);
         case YSImageFilterMaskRoundedCornersIOS7RadiusRatio:
             return iOS7RoundedCornersPath(rect, iOS7CornerRadius(rect));
         case YSImageFilterMaskCircle:
