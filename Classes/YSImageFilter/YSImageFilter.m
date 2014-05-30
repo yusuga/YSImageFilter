@@ -19,6 +19,35 @@
     #define LOG_YSIMAGE_FILTER(...)
 #endif
 
+static inline CIContext *contextUsedGPU()
+{
+    static CIContext *s_context;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_context = [CIContext contextWithOptions:@{kCIContextUseSoftwareRenderer : @NO}];
+    });
+    return s_context;
+}
+
+static inline CIContext *contextUsedCPU()
+{
+    static CIContext *s_context;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_context = [CIContext contextWithOptions:nil];
+    });
+    return s_context;
+}
+
+static inline UIImage *imageFromCIImage(CIImage *ciImage, CGFloat imageScale, BOOL useGPU)
+{
+    CIContext *context = useGPU ? contextUsedGPU() : contextUsedCPU();
+    CGImageRef imageRef = [context createCGImage:ciImage fromRect:ciImage.extent];
+    UIImage *image  = [UIImage imageWithCGImage:imageRef scale:imageScale orientation:UIImageOrientationUp];
+    CGImageRelease(imageRef);
+    return image;
+}
+
 /*
  GTMUIImage+Resize.m
  Copyright 2009 Google Inc.
@@ -378,6 +407,35 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
            maskCornerRadius:(CGFloat)maskCornerRadius
 {
     return maskPath(size, mask, maskCornerRadius);
+}
+
+#pragma mark - filter
+#pragma mark sync
+
++ (UIImage *)monochromeImageWithImage:(UIImage*)sourceImage
+                                color:(UIColor*)color
+                            intensity:(CGFloat)intensity
+{
+    CIImage *ciImage = [[CIImage alloc] initWithCGImage:sourceImage.CGImage];
+    CIFilter *filter = [CIFilter filterWithName:@"CIColorMonochrome"
+                                  keysAndValues:kCIInputImageKey, ciImage, @"inputColor", [CIColor colorWithCGColor:color.CGColor], @"inputIntensity", @(intensity), nil];
+    CIImage *filterdImage = [filter outputImage];
+    return imageFromCIImage(filterdImage, sourceImage.scale, YES);
+}
+
+#pragma mark async
+
++ (void)monochromeImageWithImage:(UIImage*)sourceImage
+                           color:(UIColor*)color
+                       intensity:(CGFloat)intensity
+                      completion:(YSImageFilterComletion)completion
+{
+    dispatch_async([self filterDispatchQueue], ^{
+        UIImage *filterdImage = [self monochromeImageWithImage:sourceImage color:color intensity:intensity];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completion) completion(filterdImage);
+        });
+    });
 }
 
 @end

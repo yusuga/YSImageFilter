@@ -74,4 +74,16 @@ typedef void(^YSImageFilterComletion)(UIImage *filterdImage);
                        mask:(YSImageFilterMask)mask
            maskCornerRadius:(CGFloat)maskCornerRadius;
 
+/* color filter */
+// https://developer.apple.com/jp/documentation/GraphicsImaging/Conceptual/CoreImaging/ci_filters/chapter_5_section_4.html
+
++ (UIImage *)monochromeImageWithImage:(UIImage*)sourceImage
+                                color:(UIColor*)color
+                            intensity:(CGFloat)intensity;
+
++ (void)monochromeImageWithImage:(UIImage*)sourceImage
+                           color:(UIColor*)color
+                       intensity:(CGFloat)intensity
+                      completion:(YSImageFilterComletion)completion;
+
 @end
