@@ -12,6 +12,7 @@
 		B81B75AC18E5C83100E822F0 /* SepiaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B81B75AB18E5C83100E822F0 /* SepiaViewController.m */; };
 		B81B75AE18E5E17800E822F0 /* TestSepia.m in Sources */ = {isa = PBXBuildFile; fileRef = B81B75AD18E5E17800E822F0 /* TestSepia.m */; };
 		B81B75B018E5E3A700E822F0 /* TestSepiaPerformance.m in Sources */ = {isa = PBXBuildFile; fileRef = B81B75AF18E5E3A600E822F0 /* TestSepiaPerformance.m */; };
+		B822707919386F9F007EFE7E /* MonochromeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B822707819386F9F007EFE7E /* MonochromeViewController.m */; };
 		B82ED19318EABDA0008F9281 /* BorderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B82ED19218EABDA0008F9281 /* BorderViewController.m */; };
 		B8814D9C18E916890041A7A5 /* MaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814D9B18E916890041A7A5 /* MaskViewController.m */; };
 		B8814D9F18E916D00041A7A5 /* ExclusiveSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814D9E18E916D00041A7A5 /* ExclusiveSelectionViewController.m */; };
@@ -58,6 +59,8 @@
 		B81B75AB18E5C83100E822F0 /* SepiaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SepiaViewController.m; sourceTree = "<group>"; };
 		B81B75AD18E5E17800E822F0 /* TestSepia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestSepia.m; sourceTree = "<group>"; };
 		B81B75AF18E5E3A600E822F0 /* TestSepiaPerformance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestSepiaPerformance.m; sourceTree = "<group>"; };
+		B822707719386F9F007EFE7E /* MonochromeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonochromeViewController.h; sourceTree = "<group>"; };
+		B822707819386F9F007EFE7E /* MonochromeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MonochromeViewController.m; sourceTree = "<group>"; };
 		B82ED19118EABDA0008F9281 /* BorderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorderViewController.h; sourceTree = "<group>"; };
 		B82ED19218EABDA0008F9281 /* BorderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BorderViewController.m; sourceTree = "<group>"; };
 		B8814D9A18E916890041A7A5 /* MaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskViewController.h; sourceTree = "<group>"; };
@@ -183,6 +186,8 @@
 				B82ED19218EABDA0008F9281 /* BorderViewController.m */,
 				B81B75AA18E5C83100E822F0 /* SepiaViewController.h */,
 				B81B75AB18E5C83100E822F0 /* SepiaViewController.m */,
+				B822707719386F9F007EFE7E /* MonochromeViewController.h */,
+				B822707819386F9F007EFE7E /* MonochromeViewController.m */,
 				B8D7350218E3AD0A004850C0 /* SelectView.xib */,
 				B8D734FF18E3ACF0004850C0 /* SelectView.h */,
 				B8D7350018E3ACF0004850C0 /* SelectView.m */,
@@ -385,6 +390,7 @@
 				B8D734CE18E29DFC004850C0 /* ViewController.m in Sources */,
 				B8D734F718E2AB58004850C0 /* ImageFilter.m in Sources */,
 				B8D7350118E3ACF0004850C0 /* SelectView.m in Sources */,
+				B822707919386F9F007EFE7E /* MonochromeViewController.m in Sources */,
 				B8D734C818E29DFC004850C0 /* AppDelegate.m in Sources */,
 				B8D7350618E3B6BA004850C0 /* FiltersTopViewController.m in Sources */,
 				B8D734EE18E29F19004850C0 /* FiltersViewController.m in Sources */,
