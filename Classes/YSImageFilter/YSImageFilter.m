@@ -256,6 +256,98 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
 }
 
 #pragma mark - resize
+
+#pragma mark sync
+
++ (UIImage*)resizeWithImage:(UIImage*)sourceImage
+                       size:(CGSize)targetSize
+                    quality:(CGInterpolationQuality)quality
+                  trimToFit:(BOOL)trimToFit
+                       mask:(YSImageFilterMask)mask
+{
+    return [self resizeWithImage:sourceImage
+                            size:targetSize
+                         quality:quality
+                       trimToFit:trimToFit
+                            mask:mask
+                     borderWidth:0.f
+                     borderColor:nil];
+}
+
++ (UIImage*)resizeWithImage:(UIImage*)sourceImage
+                       size:(CGSize)targetSize
+                    quality:(CGInterpolationQuality)quality
+                  trimToFit:(BOOL)trimToFit
+                       mask:(YSImageFilterMask)mask
+                borderWidth:(CGFloat)borderWidth
+                borderColor:(UIColor*)borderColor
+{
+    return [self resizeWithImage:sourceImage
+                            size:targetSize
+                         quality:quality
+                       trimToFit:trimToFit
+                            mask:mask
+                     borderWidth:borderWidth
+                     borderColor:borderColor
+                maskCornerRadius:0.f];
+}
+
++ (UIImage*)resizeWithImage:(UIImage*)sourceImage
+                       size:(CGSize)targetSize
+                    quality:(CGInterpolationQuality)quality
+                  trimToFit:(BOOL)trimToFit
+                       mask:(YSImageFilterMask)mask
+                borderWidth:(CGFloat)borderWidth
+                borderColor:(UIColor*)borderColor
+           maskCornerRadius:(CGFloat)maskCornerRadius
+{
+    CGSize sourceImageSize = sourceImage.size;
+    LOG_YSIMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImageSize));
+    if (sourceImageSize.height < 1 || sourceImageSize.width < 1 ||
+        targetSize.height < 1 || targetSize.width < 1) {
+        return nil;
+    }
+    
+    CGRect projectTo;
+    CGSize newSize;
+    if (CGSizeEqualToSize(sourceImage.size, targetSize)) {
+        projectTo = CGRectMake(0.f, 0.f, targetSize.width, targetSize.height);
+        newSize = targetSize;
+    } else {
+        resizedRectWithSourceImageSize(sourceImageSize, targetSize, trimToFit, &projectTo, &newSize);
+    }
+    
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.f);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetInterpolationQuality(context, quality);
+    
+    CGPathRef path = maskPath(newSize, mask, maskCornerRadius);
+    addMaskPath(context, newSize, path);
+    CGContextClip(context);
+    
+    [sourceImage drawInRect:projectTo];
+    
+    if (borderWidth > 0.f && borderColor != nil) {
+        addMaskPath(context, newSize, path);
+        CGContextSetLineWidth(context, borderWidth);
+        CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
+        CGContextStrokePath(context);
+    }
+    
+    UIImage* resizedImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    LOG_YSIMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
+    return resizedImage;
+}
+
++ (CGPathRef)maskPathOfSize:(CGSize)size
+                       mask:(YSImageFilterMask)mask
+           maskCornerRadius:(CGFloat)maskCornerRadius
+{
+    return maskPath(size, mask, maskCornerRadius);
+}
+
 #pragma mark async
 + (void)resizeWithImage:(UIImage*)sourceImage
                    size:(CGSize)targetSize
@@ -318,98 +410,8 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
     });
 }
 
-#pragma mark sync
-
-+ (UIImage*)resizeWithImage:(UIImage*)sourceImage
-                       size:(CGSize)targetSize
-                    quality:(CGInterpolationQuality)quality
-                  trimToFit:(BOOL)trimToFit
-                       mask:(YSImageFilterMask)mask
-{
-    return [self resizeWithImage:sourceImage
-                            size:targetSize
-                         quality:quality
-                       trimToFit:trimToFit
-                            mask:mask
-                     borderWidth:0.f
-                     borderColor:nil];
-}
-
-+ (UIImage*)resizeWithImage:(UIImage*)sourceImage
-                       size:(CGSize)targetSize
-                    quality:(CGInterpolationQuality)quality
-                  trimToFit:(BOOL)trimToFit
-                       mask:(YSImageFilterMask)mask
-                borderWidth:(CGFloat)borderWidth
-                borderColor:(UIColor*)borderColor
-{
-    return [self resizeWithImage:sourceImage
-                            size:targetSize
-                         quality:quality
-                       trimToFit:trimToFit
-                            mask:mask
-                     borderWidth:borderWidth
-                     borderColor:borderColor
-                maskCornerRadius:0.f];
-}
-
-+ (UIImage*)resizeWithImage:(UIImage*)sourceImage
-                       size:(CGSize)targetSize
-                    quality:(CGInterpolationQuality)quality
-                  trimToFit:(BOOL)trimToFit
-                       mask:(YSImageFilterMask)mask
-                borderWidth:(CGFloat)borderWidth
-                borderColor:(UIColor*)borderColor
-           maskCornerRadius:(CGFloat)maskCornerRadius
-{
-    CGSize sourceImageSize = sourceImage.size;
-    LOG_YSIMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImageSize));
-    if (sourceImageSize.height < 1 || sourceImageSize.width < 1 ||
-        targetSize.height < 1 || targetSize.width < 1) {
-        return nil;
-    }
-
-    CGRect projectTo;
-    CGSize newSize;
-    if (CGSizeEqualToSize(sourceImage.size, targetSize)) {
-        projectTo = CGRectMake(0.f, 0.f, targetSize.width, targetSize.height);
-        newSize = targetSize;
-    } else {
-        resizedRectWithSourceImageSize(sourceImageSize, targetSize, trimToFit, &projectTo, &newSize);
-    }
-    
-    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.f);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetInterpolationQuality(context, quality);
-
-    CGPathRef path = maskPath(newSize, mask, maskCornerRadius);
-    addMaskPath(context, newSize, path);
-    CGContextClip(context);
-    
-    [sourceImage drawInRect:projectTo];
-
-    if (borderWidth > 0.f && borderColor != nil) {
-        addMaskPath(context, newSize, path);
-        CGContextSetLineWidth(context, borderWidth);
-        CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
-        CGContextStrokePath(context);
-    }
-    
-    UIImage* resizedImage = UIGraphicsGetImageFromCurrentImageContext();
-    
-    UIGraphicsEndImageContext();
-    LOG_YSIMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
-    return resizedImage;
-}
-
-+ (CGPathRef)maskPathOfSize:(CGSize)size
-                       mask:(YSImageFilterMask)mask
-           maskCornerRadius:(CGFloat)maskCornerRadius
-{
-    return maskPath(size, mask, maskCornerRadius);
-}
-
 #pragma mark - filter
+
 #pragma mark sync
 
 + (UIImage *)monochromeImageWithImage:(UIImage*)sourceImage
