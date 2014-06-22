@@ -7,7 +7,7 @@
 //
 
 #import "MaskViewController.h"
-#import "YSImageFilter.h"
+#import "UIImage+YSImageFilter.h"
 
 typedef NS_ENUM(NSUInteger, Row) {
     RowMaskNone,
@@ -51,14 +51,14 @@ typedef NS_ENUM(NSUInteger, Row) {
     [self setImageWithProcessName:processName
                              size:CGSizeMake(minSize, minSize)
                           process:^UIImage *(UIImage *sourceImage, CGSize size) {
-                              return [YSImageFilter resizeWithImage:sourceImage
-                                                               size:size
-                                                            quality:kCGInterpolationHigh
-                                                          trimToFit:YES
-                                                               mask:mask
-                                                        borderWidth:0.f
-                                                        borderColor:nil
-                                                   maskCornerRadius:10.f];
+                              YSImageFilter *filter = [[YSImageFilter alloc] init];
+                              filter.size = size;
+                              filter.quality = kCGInterpolationHigh;
+                              filter.trimToFit = YES;
+                              filter.mask = mask;
+                              filter.maskCornerRadius = 10.f;
+                              
+                              return [sourceImage ys_filter:filter];
                           }];
 
 }

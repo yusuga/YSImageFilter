@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UIImage+YSImageFilter.h"
 #import "ImageFilter.h"
-#import "YSImageFilter.h"
 #import "SelectView.h"
 
 #import <YSProcessTimer/YSProcessTimer.h>

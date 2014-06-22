@@ -20,10 +20,12 @@
     if (!self.isViewLoaded) {
         [self performSelector:@selector(view)];
     }
-    self.sourceImage = [YSImageFilter resizeWithImage:self.sourceImage
-                                                 size:targetImageView.bounds.size
-                                              quality:kCGInterpolationHigh
-                                            trimToFit:YES mask:YSImageFilterMaskNone];
+    YSImageFilter *filter = [[YSImageFilter alloc] init];
+    filter.size = targetImageView.bounds.size;
+    filter.quality = kCGInterpolationHigh;
+    filter.trimToFit = YES;
+    
+    self.sourceImage = [self.sourceImage ys_filter:filter];    
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath

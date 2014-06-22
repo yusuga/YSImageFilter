@@ -14,6 +14,7 @@
 		B81B75B018E5E3A700E822F0 /* TestSepiaPerformance.m in Sources */ = {isa = PBXBuildFile; fileRef = B81B75AF18E5E3A600E822F0 /* TestSepiaPerformance.m */; };
 		B822707919386F9F007EFE7E /* MonochromeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B822707819386F9F007EFE7E /* MonochromeViewController.m */; };
 		B82ED19318EABDA0008F9281 /* BorderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B82ED19218EABDA0008F9281 /* BorderViewController.m */; };
+		B86B5B201955E7B400FEC205 /* UIImage+YSImageFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B86B5B1F1955E7B400FEC205 /* UIImage+YSImageFilter.m */; };
 		B8814D9C18E916890041A7A5 /* MaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814D9B18E916890041A7A5 /* MaskViewController.m */; };
 		B8814D9F18E916D00041A7A5 /* ExclusiveSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814D9E18E916D00041A7A5 /* ExclusiveSelectionViewController.m */; };
 		B8CE5CAA18E4849C00268B7C /* TestResizeAndMask.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CE5CA918E4849C00268B7C /* TestResizeAndMask.m */; };
@@ -33,7 +34,6 @@
 		B8D734E118E29DFC004850C0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B8D734DF18E29DFC004850C0 /* InfoPlist.strings */; };
 		B8D734EE18E29F19004850C0 /* FiltersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8D734ED18E29F19004850C0 /* FiltersViewController.m */; };
 		B8D734F018E2A2F0004850C0 /* cat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B8D734EF18E2A2F0004850C0 /* cat@2x.png */; };
-		B8D734F418E2AA9B004850C0 /* YSImageFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B8D734F318E2AA9B004850C0 /* YSImageFilter.m */; };
 		B8D734F718E2AB58004850C0 /* ImageFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B8D734F618E2AB58004850C0 /* ImageFilter.m */; };
 		B8D734FB18E353F3004850C0 /* ResizeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8D734FA18E353F3004850C0 /* ResizeViewController.m */; };
 		B8D7350118E3ACF0004850C0 /* SelectView.m in Sources */ = {isa = PBXBuildFile; fileRef = B8D7350018E3ACF0004850C0 /* SelectView.m */; };
@@ -63,6 +63,8 @@
 		B822707819386F9F007EFE7E /* MonochromeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MonochromeViewController.m; sourceTree = "<group>"; };
 		B82ED19118EABDA0008F9281 /* BorderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorderViewController.h; sourceTree = "<group>"; };
 		B82ED19218EABDA0008F9281 /* BorderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BorderViewController.m; sourceTree = "<group>"; };
+		B86B5B1E1955E7B400FEC205 /* UIImage+YSImageFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+YSImageFilter.h"; sourceTree = "<group>"; };
+		B86B5B1F1955E7B400FEC205 /* UIImage+YSImageFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+YSImageFilter.m"; sourceTree = "<group>"; };
 		B8814D9A18E916890041A7A5 /* MaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskViewController.h; sourceTree = "<group>"; };
 		B8814D9B18E916890041A7A5 /* MaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaskViewController.m; sourceTree = "<group>"; };
 		B8814D9D18E916D00041A7A5 /* ExclusiveSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusiveSelectionViewController.h; sourceTree = "<group>"; };
@@ -91,8 +93,6 @@
 		B8D734EC18E29F19004850C0 /* FiltersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiltersViewController.h; sourceTree = "<group>"; };
 		B8D734ED18E29F19004850C0 /* FiltersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FiltersViewController.m; sourceTree = "<group>"; };
 		B8D734EF18E2A2F0004850C0 /* cat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cat@2x.png"; sourceTree = "<group>"; };
-		B8D734F218E2AA9B004850C0 /* YSImageFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YSImageFilter.h; sourceTree = "<group>"; };
-		B8D734F318E2AA9B004850C0 /* YSImageFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YSImageFilter.m; sourceTree = "<group>"; };
 		B8D734F518E2AB58004850C0 /* ImageFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFilter.h; sourceTree = "<group>"; };
 		B8D734F618E2AB58004850C0 /* ImageFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageFilter.m; sourceTree = "<group>"; };
 		B8D734F918E353F3004850C0 /* ResizeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResizeViewController.h; sourceTree = "<group>"; };
@@ -237,8 +237,8 @@
 		B8D734F118E2AA8B004850C0 /* YSImageFilter */ = {
 			isa = PBXGroup;
 			children = (
-				B8D734F218E2AA9B004850C0 /* YSImageFilter.h */,
-				B8D734F318E2AA9B004850C0 /* YSImageFilter.m */,
+				B86B5B1E1955E7B400FEC205 /* UIImage+YSImageFilter.h */,
+				B86B5B1F1955E7B400FEC205 /* UIImage+YSImageFilter.m */,
 			);
 			name = YSImageFilter;
 			path = ../../Classes/YSImageFilter;
@@ -390,6 +390,7 @@
 				B8D734CE18E29DFC004850C0 /* ViewController.m in Sources */,
 				B8D734F718E2AB58004850C0 /* ImageFilter.m in Sources */,
 				B8D7350118E3ACF0004850C0 /* SelectView.m in Sources */,
+				B86B5B201955E7B400FEC205 /* UIImage+YSImageFilter.m in Sources */,
 				B822707919386F9F007EFE7E /* MonochromeViewController.m in Sources */,
 				B8D734C818E29DFC004850C0 /* AppDelegate.m in Sources */,
 				B8D7350618E3B6BA004850C0 /* FiltersTopViewController.m in Sources */,
@@ -400,7 +401,6 @@
 				B81B75AC18E5C83100E822F0 /* SepiaViewController.m in Sources */,
 				B8D734C418E29DFC004850C0 /* main.m in Sources */,
 				B82ED19318EABDA0008F9281 /* BorderViewController.m in Sources */,
-				B8D734F418E2AA9B004850C0 /* YSImageFilter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

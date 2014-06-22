@@ -7,7 +7,7 @@
 //
 
 #import "ResizeViewController.h"
-#import <NSRunLoop-PerformBlock/NSRunLoop+PerformBlock.h>
+#import <NSRunLoop+PerformBlock/NSRunLoop+PerformBlock.h>
 
 typedef NS_ENUM(NSUInteger, Row) {
     RowResizeSimpleCoreGraphicsNone,
@@ -133,16 +133,21 @@ typedef NS_ENUM(NSUInteger, Row) {
             processName = [NSString stringWithFormat:@"set CoreGraphics(%@)", qualityStr];
             BOOL async = self.backgroundSwitch.on;
             setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
+                YSImageFilter *filter = [[YSImageFilter alloc] init];
+                filter.size = size;
+                filter.quality = quality;
+                filter.trimToFit = trimToFit;
+
                 __block UIImage *resizedImage;
                 if (async) {
                     [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
-                        [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit mask:YSImageFilterMaskNone completion:^(UIImage *filterdImage) {
+                        [sourceImage ys_filter:filter withCompletion:^(UIImage *filterdImage) {
                             resizedImage = filterdImage;
                             *finish = YES;
                         }];
                     } timeoutInterval:DBL_MAX];
                 } else {
-                    resizedImage = [YSImageFilter resizeWithImage:sourceImage size:size quality:quality trimToFit:trimToFit mask:YSImageFilterMaskNone];
+                    resizedImage = [sourceImage ys_filter:filter];
                 }
                 return resizedImage;
             };

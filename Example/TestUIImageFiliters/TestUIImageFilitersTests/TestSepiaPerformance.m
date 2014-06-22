@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Utility.h"
-#import "YSImageFilter.h"
+#import "UIImage+YSImageFilter.h"
 #import "ImageFilter.h"
 #import <YSProcessTimer/YSProcessTimer.h>
 

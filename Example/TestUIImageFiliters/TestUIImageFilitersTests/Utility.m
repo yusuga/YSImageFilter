@@ -8,7 +8,7 @@
 
 #import "Utility.h"
 #import <YSUIKitAdditions/UIImage+YSUIKitAdditions.h>
-#import "YSImageFilter.h"
+#import "UIImage+YSImageFilter.h"
 
 NSUInteger const kNumberOfTrials = 100;
 
@@ -21,11 +21,12 @@ NSUInteger const kNumberOfTrials = 100;
 
 + (UIImage *)catImageWithSize:(CGSize)size
 {
-    return [YSImageFilter resizeWithImage:[UIImage imageNamed:@"cat"]
-                                     size:size
-                                  quality:kCGInterpolationHigh
-                                trimToFit:YES
-                                     mask:YSImageFilterMaskNone];
+    YSImageFilter *filter = [[YSImageFilter alloc] init];
+    filter.size = size;
+    filter.quality = kCGInterpolationHigh;
+    filter.trimToFit = YES;
+    
+    return [[UIImage imageNamed:@"cat"] ys_filter:filter];
 }
 
 + (BOOL)validateImage:(UIImage*)image estimatedSize:(CGSize)estimatedSize

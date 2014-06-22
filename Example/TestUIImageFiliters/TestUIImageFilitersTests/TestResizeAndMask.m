@@ -8,9 +8,9 @@
 
 #import <XCTest/XCTest.h>
 #import "Utility.h"
-#import "YSImageFilter.h"
+#import "UIImage+YSImageFilter.h"
 #import "ImageFilter.h"
-#import <NSRunLoop-PerformBlock/NSRunLoop+PerformBlock.h>
+#import <NSRunLoop+PerformBlock/NSRunLoop+PerformBlock.h>
 
 typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 
@@ -159,22 +159,22 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
                                                                                                         CGSize resizeSize,
                                                                                                         BOOL trimToFit)
                       {
+                          YSImageFilter *filter = [[YSImageFilter alloc] init];
+                          filter.size = size;
+                          filter.quality = quality;
+                          filter.trimToFit = trimToFit;
+                          filter.mask = mask;
+                          
                           __block UIImage *resizedImage;
                           if (async) {
                               [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
-                                  [YSImageFilter resizeWithImage:sourceImage
-                                                            size:size
-                                                         quality:quality
-                                                       trimToFit:trimToFit mask:mask completion:^(UIImage *filterdImage) {
-                                                           resizedImage = filterdImage;
-                                                           *finish = YES;
-                                                       }];
+                                  [sourceImage ys_filter:filter withCompletion:^(UIImage *filterdImage) {
+                                      resizedImage = filterdImage;
+                                      *finish = YES;
+                                  }];
                               } timeoutInterval:DBL_MAX];
                           } else {
-                              resizedImage = [YSImageFilter resizeWithImage:sourceImage
-                                                                       size:size
-                                                                    quality:quality trimToFit:trimToFit
-                                                                       mask:mask];
+                              resizedImage = [sourceImage ys_filter:filter];
                           }
                           return resizedImage;
                       }]) {

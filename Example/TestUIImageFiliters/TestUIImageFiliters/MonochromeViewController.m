@@ -45,7 +45,12 @@
     [self setImageWithProcessName:processName
                              size:self.sourceImage.size
                           process:^UIImage *(UIImage *sourceImage, CGSize size) {
-                              return [YSImageFilter monochromeImageWithImage:sourceImage color:color intensity:1.f];
+                              YSImageFilter *filter = [[YSImageFilter alloc] init];
+                              filter.borderWidth = 10.f;
+                              filter.borderColor = [UIColor redColor];
+                              
+                              filter.colorEffectFilterAttributes = @[[YSImageFilter monochromeAttributesWithColor:color intensity:1.f]];
+                              return [sourceImage ys_filter:filter];
                           }];
 }
 

@@ -8,10 +8,19 @@
 
 #import "AppDelegate.h"
 
+void uncaughtExceptionHandler(NSException*);
+void uncaughtExceptionHandler(NSException *exception) {
+    NSLog(@"CRASH: %@", exception);
+    NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
+}
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+#ifdef DEBUG
+    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+#endif
     // Override point for customization after application launch.
     return YES;
 }

@@ -9,9 +9,9 @@
 #import <XCTest/XCTest.h>
 #import "Utility.h"
 #import <YSProcessTimer/YSProcessTimer.h>
-#import <NSRunLoop-PerformBlock/NSRunLoop+PerformBlock.h>
+#import <NSRunLoop+PerformBlock/NSRunLoop+PerformBlock.h>
 
-#import "YSImageFilter.h"
+#import "UIImage+YSImageFilter.h"
 #import "ImageFilter.h"
 
 @interface TestResizePerformance : XCTestCase
@@ -107,10 +107,22 @@
 {
     /* Idling */
     // CoreGraphics
-    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationNone trimToFit:trimToFit mask:YSImageFilterMaskNone];
-    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationLow trimToFit:trimToFit mask:YSImageFilterMaskNone];
-    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationMedium trimToFit:trimToFit mask:YSImageFilterMaskNone];
-    [YSImageFilter resizeWithImage:sourceImage size:resizeSize quality:kCGInterpolationHigh trimToFit:trimToFit mask:YSImageFilterMaskNone];
+    YSImageFilter *filter = [[YSImageFilter alloc] init];
+    filter.size = resizeSize;
+    filter.quality = kCGInterpolationNone;
+    filter.trimToFit = trimToFit;
+    filter.mask = YSImageFilterMaskNone;
+    
+    [sourceImage ys_filter:filter];
+    
+    filter.quality = kCGInterpolationLow;
+    [sourceImage ys_filter:filter];
+    
+    filter.quality = kCGInterpolationMedium;
+    [sourceImage ys_filter:filter];
+    
+    filter.quality = kCGInterpolationHigh;
+    [sourceImage ys_filter:filter];
     
     // NYXImagesKit
     [ImageFilter resizeInNYXImagesKitWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
@@ -191,7 +203,12 @@ CoreImage(GPU) %f (%@ FPS)\n\n",
     }
     NSString *name = [NSString stringWithFormat:@"average CoreGraphics(%@), resize: %@", qualityStr, NSStringFromCGSize(size)];
     return [YSProcessTimer startAverageWithProcessName:name numberOfTrials:kNumberOfTrials process:^{
-        [YSImageFilter resizeWithImage:image size:size quality:quality trimToFit:trimToFit mask:YSImageFilterMaskNone];
+        YSImageFilter *filter = [[YSImageFilter alloc] init];
+        filter.size = size;
+        filter.quality = quality;
+        filter.trimToFit = trimToFit;
+        
+        [image ys_filter:filter];
     }];
 }
 
