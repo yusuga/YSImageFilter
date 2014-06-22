@@ -10,9 +10,28 @@
 
 @interface MonochromeViewController ()
 
+@property (strong, nonatomic) IBOutlet UILabel *maskLabel;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *maskSwitchItem;
+@property (weak, nonatomic) IBOutlet UISwitch *maskSwitch;
+
+@property (strong, nonatomic) IBOutlet UILabel *borderLabel;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *borderSwitchItem;
+@property (weak, nonatomic) IBOutlet UISwitch *borderSwitch;
+
 @end
 
 @implementation MonochromeViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.navigationItem.rightBarButtonItems = @[self.maskSwitchItem,
+                                                [[UIBarButtonItem alloc] initWithCustomView:self.maskLabel],
+                                                self.borderSwitchItem,
+                                                [[UIBarButtonItem alloc] initWithCustomView:self.borderLabel]];
+    self.disableExclusiveResize = YES;
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -42,16 +61,25 @@
             break;
     }
     
+    __weak typeof(self) wself = self;
     [self setImageWithProcessName:processName
                              size:self.sourceImage.size
                           process:^UIImage *(UIImage *sourceImage, CGSize size) {
                               YSImageFilter *filter = [[YSImageFilter alloc] init];
-                              filter.borderWidth = 10.f;
-                              filter.borderColor = [UIColor redColor];
+                              if (wself.borderSwitch.on) {
+                                  filter.borderWidth = 10.f;
+                                  filter.borderColor = [UIColor redColor];
+                              }
+                              filter.mask = wself.maskSwitch.on ? YSImageFilterMaskCircle : YSImageFilterMaskNone;
                               
                               filter.colorEffectFilterAttributes = @[[YSImageFilter monochromeAttributesWithColor:color intensity:1.f]];
                               return [sourceImage ys_filter:filter];
                           }];
+}
+
+- (IBAction)switchDidChange:(UISwitch *)sender
+{
+    [self.tableView reloadData];
 }
 
 @end

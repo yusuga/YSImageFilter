@@ -17,9 +17,15 @@
 - (void)setTargetImageView:(UIImageView *)targetImageView
 {
     [super setTargetImageView:targetImageView];
+    
     if (!self.isViewLoaded) {
         [self performSelector:@selector(view)];
     }
+    
+    if (self.disableExclusiveResize) {
+        return;
+    }
+    
     YSImageFilter *filter = [[YSImageFilter alloc] init];
     filter.size = targetImageView.bounds.size;
     filter.quality = kCGInterpolationHigh;

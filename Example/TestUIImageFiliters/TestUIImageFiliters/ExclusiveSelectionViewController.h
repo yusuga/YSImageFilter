@@ -10,4 +10,6 @@
 
 @interface ExclusiveSelectionViewController : FiltersViewController
 
+@property (nonatomic) BOOL disableExclusiveResize;
+
 @end
