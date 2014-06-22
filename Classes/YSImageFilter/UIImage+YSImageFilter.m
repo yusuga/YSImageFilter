@@ -1,16 +1,15 @@
 //
-//  YSImageFilter.m
+//  UIImage+YSImageFilter.m
 //  TestUIImageFiliters
 //
-//  Created by Yu Sugawara on 2014/03/26.
+//  Created by Yu Sugawara on 2014/06/22.
 //  Copyright (c) 2014年 Yu Sugawara. All rights reserved.
 //
 
-#import "YSImageFilter.h"
-@import CoreImage;
+#import "UIImage+YSImageFilter.h"
 
 #if DEBUG
-    #if 0
+    #if 1
         #define LOG_YSIMAGE_FILTER(...) NSLog(__VA_ARGS__)
     #endif
 #endif
@@ -18,6 +17,8 @@
 #ifndef LOG_YSIMAGE_FILTER
     #define LOG_YSIMAGE_FILTER(...)
 #endif
+
+static NSString * const kMonochrome = @"CIColorMonochrome";
 
 static inline CIContext *contextUsedGPU()
 {
@@ -123,20 +124,20 @@ static inline void resizedRectWithSourceImageSize(CGSize sourceImageSize,
 /* http://www.paintcodeapp.com/blogpost/code-for-ios-7-rounded-rectangles */
 
 #define TOP_LEFT(X, Y)\
-    CGPointMake(rect.origin.x + X * limitedRadius,\
-    rect.origin.y + Y * limitedRadius)
+CGPointMake(rect.origin.x + X * limitedRadius,\
+rect.origin.y + Y * limitedRadius)
 
 #define TOP_RIGHT(X, Y)\
-    CGPointMake(rect.origin.x + rect.size.width - X * limitedRadius,\
-    rect.origin.y + Y * limitedRadius)
+CGPointMake(rect.origin.x + rect.size.width - X * limitedRadius,\
+rect.origin.y + Y * limitedRadius)
 
 #define BOTTOM_RIGHT(X, Y)\
-    CGPointMake(rect.origin.x + rect.size.width - X * limitedRadius,\
-    rect.origin.y + rect.size.height - Y * limitedRadius)
+CGPointMake(rect.origin.x + rect.size.width - X * limitedRadius,\
+rect.origin.y + rect.size.height - Y * limitedRadius)
 
 #define BOTTOM_LEFT(X, Y)\
-    CGPointMake(rect.origin.x + X * limitedRadius,\
-    rect.origin.y + rect.size.height - Y * limitedRadius)
+CGPointMake(rect.origin.x + X * limitedRadius,\
+rect.origin.y + rect.size.height - Y * limitedRadius)
 
 static inline CGPathRef iOS7RoundedCornersPath(CGRect rect, CGFloat radius)
 {
@@ -245,7 +246,28 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
 
 @implementation YSImageFilter
 
-+ (dispatch_queue_t)filterDispatchQueue
+- (instancetype)init
+{
+    if (self = [super init]) {
+        self.quality = kCGInterpolationDefault;
+    }
+    return self;
+}
+
++ (NSDictionary *)monochromeAttributesWithColor:(UIColor*)color intensity:(CGFloat)intensity
+{
+    return @{kMonochrome : @{
+                     kCIInputColorKey : color,
+                     kCIInputIntensityKey : @(intensity)
+                     }
+             };
+}
+
+@end
+
+@implementation UIImage (YSImageFilter)
+
++ (dispatch_queue_t)ys_filterDispatchQueue
 {
     static dispatch_queue_t s_queue;
     static dispatch_once_t onceToken;
@@ -255,185 +277,93 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
     return s_queue;
 }
 
-#pragma mark - resize
-
-#pragma mark sync
-
-+ (UIImage*)resizeWithImage:(UIImage*)sourceImage
-                       size:(CGSize)targetSize
-                    quality:(CGInterpolationQuality)quality
-                  trimToFit:(BOOL)trimToFit
-                       mask:(YSImageFilterMask)mask
+- (UIImage*)ys_filter:(YSImageFilter*)filter
 {
-    return [self resizeWithImage:sourceImage
-                            size:targetSize
-                         quality:quality
-                       trimToFit:trimToFit
-                            mask:mask
-                     borderWidth:0.f
-                     borderColor:nil];
-}
-
-+ (UIImage*)resizeWithImage:(UIImage*)sourceImage
-                       size:(CGSize)targetSize
-                    quality:(CGInterpolationQuality)quality
-                  trimToFit:(BOOL)trimToFit
-                       mask:(YSImageFilterMask)mask
-                borderWidth:(CGFloat)borderWidth
-                borderColor:(UIColor*)borderColor
-{
-    return [self resizeWithImage:sourceImage
-                            size:targetSize
-                         quality:quality
-                       trimToFit:trimToFit
-                            mask:mask
-                     borderWidth:borderWidth
-                     borderColor:borderColor
-                maskCornerRadius:0.f];
-}
-
-+ (UIImage*)resizeWithImage:(UIImage*)sourceImage
-                       size:(CGSize)targetSize
-                    quality:(CGInterpolationQuality)quality
-                  trimToFit:(BOOL)trimToFit
-                       mask:(YSImageFilterMask)mask
-                borderWidth:(CGFloat)borderWidth
-                borderColor:(UIColor*)borderColor
-           maskCornerRadius:(CGFloat)maskCornerRadius
-{
+    UIImage *sourceImage = self;
     CGSize sourceImageSize = sourceImage.size;
+    
     LOG_YSIMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImageSize));
-    if (sourceImageSize.height < 1 || sourceImageSize.width < 1 ||
-        targetSize.height < 1 || targetSize.width < 1) {
+    if (sourceImageSize.height < 1 || sourceImageSize.width < 1) {
         return nil;
     }
     
+    BOOL resize = NO;
     CGRect projectTo;
     CGSize newSize;
-    if (CGSizeEqualToSize(sourceImage.size, targetSize)) {
-        projectTo = CGRectMake(0.f, 0.f, targetSize.width, targetSize.height);
-        newSize = targetSize;
+    if (CGSizeEqualToSize(filter.size, CGSizeZero) ||
+        CGSizeEqualToSize(sourceImageSize, filter.size)) {
+        projectTo = CGRectMake(0.f, 0.f, sourceImageSize.width, sourceImageSize.height);
+        newSize = sourceImageSize;
     } else {
-        resizedRectWithSourceImageSize(sourceImageSize, targetSize, trimToFit, &projectTo, &newSize);
+        resize = YES;
+        resizedRectWithSourceImageSize(sourceImageSize, filter.size, filter.trimToFit, &projectTo, &newSize);
     }
+    
+    CGPathRef path = maskPath(newSize, filter.mask, filter.maskCornerRadius);
     
     UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.f);
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetInterpolationQuality(context, quality);
+    CGContextSetInterpolationQuality(context, filter.quality);
     
-    CGPathRef path = maskPath(newSize, mask, maskCornerRadius);
+    if ([filter.colorEffectFilterAttributes count] > 0) {
+        if (resize || filter.mask != YSImageFilterMaskNone) {
+            addMaskPath(context, newSize, path);
+            CGContextClip(context);
+            [sourceImage drawInRect:projectTo];
+            sourceImage = UIGraphicsGetImageFromCurrentImageContext();
+        }
+        
+        for (NSDictionary *filterAttribute in filter.colorEffectFilterAttributes) {
+            CIImage *ciImage = [[CIImage alloc] initWithCGImage:sourceImage.CGImage];
+            NSString *filterName = [[filterAttribute allKeys] firstObject];
+            NSDictionary *attribute = filterAttribute[filterName];
+            CIFilter *filter;
+            if ([filterName isEqualToString:kMonochrome]) {
+                UIColor *color = attribute[kCIInputColorKey];
+                NSNumber *intensity = attribute[kCIInputIntensityKey];
+                filter = [CIFilter filterWithName:filterName
+                                    keysAndValues:kCIInputImageKey, ciImage, kCIInputColorKey, [CIColor colorWithCGColor:color.CGColor], kCIInputIntensityKey, intensity, nil];
+            } else {
+                NSAssert1(false, @"unsupported filter: %@", filterName);
+                continue;
+            }
+            
+            CIImage *filterdImage = [filter outputImage];
+            sourceImage = imageFromCIImage(filterdImage, sourceImage.scale, YES);
+        }
+    }
+    
+    if (filter.backgroundColor) {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        [filter.backgroundColor setFill];
+        addMaskPath(context, newSize, path);
+        CGContextFillPath(context);
+    }
+    
     addMaskPath(context, newSize, path);
     CGContextClip(context);
-    
     [sourceImage drawInRect:projectTo];
     
-    if (borderWidth > 0.f && borderColor != nil) {
+    if (filter.borderWidth > 0.f && filter.borderColor) {
         addMaskPath(context, newSize, path);
-        CGContextSetLineWidth(context, borderWidth);
-        CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
+        CGContextSetLineWidth(context, filter.borderWidth);
+        CGContextSetStrokeColorWithColor(context, filter.borderColor.CGColor);
         CGContextStrokePath(context);
     }
     
-    UIImage* resizedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage *filterdImage = UIGraphicsGetImageFromCurrentImageContext();
     
     UIGraphicsEndImageContext();
-    LOG_YSIMAGE_FILTER(@"resizedImage: %@", NSStringFromCGSize(resizedImage.size));
-    return resizedImage;
+    
+    LOG_YSIMAGE_FILTER(@"filterdImage: %@", NSStringFromCGSize(filterdImage.size));
+    return filterdImage;
 }
 
-+ (CGPathRef)maskPathOfSize:(CGSize)size
-                       mask:(YSImageFilterMask)mask
-           maskCornerRadius:(CGFloat)maskCornerRadius
+- (void)ys_filter:(YSImageFilter*)filter withCompletion:(YSImageFilterComletion)completion
 {
-    return maskPath(size, mask, maskCornerRadius);
-}
-
-#pragma mark async
-+ (void)resizeWithImage:(UIImage*)sourceImage
-                   size:(CGSize)targetSize
-                quality:(CGInterpolationQuality)quality
-              trimToFit:(BOOL)trimToFit
-                   mask:(YSImageFilterMask)mask
-             completion:(YSImageFilterComletion)completion;
-{
-    [self resizeWithImage:sourceImage
-                     size:targetSize
-                  quality:quality
-                trimToFit:trimToFit
-                     mask:mask
-              borderWidth:0.f
-              borderColor:nil
-               completion:completion];
-}
-
-+ (void)resizeWithImage:(UIImage*)sourceImage
-                   size:(CGSize)targetSize
-                quality:(CGInterpolationQuality)quality
-              trimToFit:(BOOL)trimToFit
-                   mask:(YSImageFilterMask)mask
-            borderWidth:(CGFloat)borderWidth
-            borderColor:(UIColor*)borderColor
-             completion:(YSImageFilterComletion)completion;
-{
-    [self resizeWithImage:sourceImage
-                     size:targetSize
-                  quality:quality
-                trimToFit:trimToFit
-                     mask:mask
-              borderWidth:borderWidth
-              borderColor:borderColor
-         maskCornerRadius:0.f];
-}
-
-+ (void)resizeWithImage:(UIImage*)sourceImage
-                   size:(CGSize)targetSize
-                quality:(CGInterpolationQuality)quality
-              trimToFit:(BOOL)trimToFit
-                   mask:(YSImageFilterMask)mask
-            borderWidth:(CGFloat)borderWidth
-            borderColor:(UIColor*)borderColor
-       maskCornerRadius:(CGFloat)maskCornerRadius
-             completion:(YSImageFilterComletion)completion
-{
-    dispatch_async([self filterDispatchQueue], ^{
-        UIImage *filterdImage = [self resizeWithImage:sourceImage
-                                                 size:targetSize
-                                              quality:quality
-                                            trimToFit:trimToFit
-                                                 mask:mask
-                                          borderWidth:borderWidth
-                                          borderColor:borderColor
-                                     maskCornerRadius:maskCornerRadius];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completion) completion(filterdImage);
-        });
-    });
-}
-
-#pragma mark - filter
-
-#pragma mark sync
-
-+ (UIImage *)monochromeImageWithImage:(UIImage*)sourceImage
-                                color:(UIColor*)color
-                            intensity:(CGFloat)intensity
-{
-    CIImage *ciImage = [[CIImage alloc] initWithCGImage:sourceImage.CGImage];
-    CIFilter *filter = [CIFilter filterWithName:@"CIColorMonochrome"
-                                  keysAndValues:kCIInputImageKey, ciImage, @"inputColor", [CIColor colorWithCGColor:color.CGColor], @"inputIntensity", @(intensity), nil];
-    CIImage *filterdImage = [filter outputImage];
-    return imageFromCIImage(filterdImage, sourceImage.scale, YES);
-}
-
-#pragma mark async
-
-+ (void)monochromeImageWithImage:(UIImage*)sourceImage
-                           color:(UIColor*)color
-                       intensity:(CGFloat)intensity
-                      completion:(YSImageFilterComletion)completion
-{
-    dispatch_async([self filterDispatchQueue], ^{
-        UIImage *filterdImage = [self monochromeImageWithImage:sourceImage color:color intensity:intensity];
+    __strong typeof(self) strongSelf = self;
+    dispatch_async([[self class] ys_filterDispatchQueue], ^{
+        UIImage *filterdImage = [strongSelf ys_filter:filter];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completion) completion(filterdImage);
         });
