@@ -263,6 +263,13 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
              };
 }
 
++ (CGPathRef)maskPathOfSize:(CGSize)size
+                       mask:(YSImageFilterMask)mask
+           maskCornerRadius:(CGFloat)maskCornerRadius
+{
+    return maskPath(size, mask, maskCornerRadius);
+}
+
 @end
 
 @implementation UIImage (YSImageFilter)

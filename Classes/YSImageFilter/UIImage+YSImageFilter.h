@@ -41,6 +41,12 @@ typedef NS_ENUM(NSUInteger, YSImageFilterMask) {
 + (NSDictionary *)monochromeAttributesWithColor:(UIColor*)color
                                       intensity:(CGFloat)intensity;
 
+// mask path
+
++ (CGPathRef)maskPathOfSize:(CGSize)size
+                       mask:(YSImageFilterMask)mask
+           maskCornerRadius:(CGFloat)maskCornerRadius;
+
 @end
 
 @interface UIImage (YSImageFilter)
