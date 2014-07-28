@@ -21,6 +21,7 @@ typedef NS_ENUM(NSUInteger, YSImageFilterMask) {
 
 // resize
 @property (nonatomic) CGSize size;
+@property (nonatomic) CGFloat maxResolution;
 @property (nonatomic) CGInterpolationQuality quality; // default: kCGInterpolationDefault
 @property (nonatomic) BOOL trimToFit;
 

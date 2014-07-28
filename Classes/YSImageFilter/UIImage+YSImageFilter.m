@@ -119,6 +119,27 @@ static inline void resizedRectWithSourceImageSize(CGSize sourceImageSize,
     *newSizePtr = newSize;
 }
 
+static inline void resizedRectOfMaxResolutionWithSourceImageSize(CGSize sourceImageSize,
+                                                                 CGFloat maxResolution,
+                                                                 CGRect* projectToPtr,
+                                                                 CGSize* newSizePtr)
+{
+    CGSize imgSize = sourceImageSize;
+	if (imgSize.width > maxResolution || imgSize.height > maxResolution) {
+		CGFloat ratio = imgSize.width/imgSize.height;
+		if (ratio > 1) {
+			imgSize.width = maxResolution;
+			imgSize.height = imgSize.width / ratio;
+		}
+		else {
+			imgSize.height = maxResolution;
+			imgSize.width = imgSize.height * ratio;
+		}
+	}
+	*projectToPtr = CGRectMake(0.f, 0.f, imgSize.width, imgSize.height);
+    *newSizePtr = imgSize;
+}
+
 #pragma mark - iOS7 RoundedRect
 
 /* http://www.paintcodeapp.com/blogpost/code-for-ios-7-rounded-rectangles */
@@ -297,13 +318,19 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
     BOOL resize = NO;
     CGRect projectTo;
     CGSize newSize;
-    if (CGSizeEqualToSize(filter.size, CGSizeZero) ||
-        CGSizeEqualToSize(sourceImageSize, filter.size)) {
-        projectTo = CGRectMake(0.f, 0.f, sourceImageSize.width, sourceImageSize.height);
-        newSize = sourceImageSize;
-    } else {
+    
+    if (filter.maxResolution > 0.f) {
         resize = YES;
-        resizedRectWithSourceImageSize(sourceImageSize, filter.size, filter.trimToFit, &projectTo, &newSize);
+        resizedRectOfMaxResolutionWithSourceImageSize(sourceImageSize, filter.maxResolution, &projectTo, &newSize);
+    } else {
+        if (CGSizeEqualToSize(filter.size, CGSizeZero) ||
+            CGSizeEqualToSize(sourceImageSize, filter.size)) {
+            projectTo = CGRectMake(0.f, 0.f, sourceImageSize.width, sourceImageSize.height);
+            newSize = sourceImageSize;
+        } else {
+            resize = YES;
+            resizedRectWithSourceImageSize(sourceImageSize, filter.size, filter.trimToFit, &projectTo, &newSize);
+        }
     }
     
     CGPathRef path = maskPath(newSize, filter.mask, filter.maskCornerRadius);
