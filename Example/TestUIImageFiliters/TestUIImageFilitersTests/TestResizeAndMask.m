@@ -138,19 +138,9 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
 
 - (BOOL)resizeInCoreGraphicsWithImage:(UIImage*)image size:(CGSize)size
 {
-    NSArray *qualities = @[@(kCGInterpolationNone),
-                           @(kCGInterpolationLow),
-                           @(kCGInterpolationMedium),
-                           @(kCGInterpolationHigh),
-                           @(kCGInterpolationDefault)];
-    
-    NSArray *masks = @[@(YSImageFilterMaskNone),
-                       @(YSImageFilterMaskRoundedCorners),
-                       @(YSImageFilterMaskCircle)];
-    
-    for (NSNumber *qualityNum in qualities) {
+    for (NSNumber *qualityNum in [self qualities]) {
         CGInterpolationQuality quality = [qualityNum integerValue];
-        for (NSNumber *maskNum in masks) {
+        for (NSNumber *maskNum in [self masks]) {
             YSImageFilterMask mask = [maskNum integerValue];
             
             for (NSNumber *asyncNum in @[@NO, @YES]) {
@@ -299,6 +289,94 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
         return NO;
     }
     return YES;
+}
+
+#pragma mark - test max resolution
+
+- (void)testResizeOfMaxResolution
+{
+    NSArray *images = @[[Utility solidColorImageWithSize:CGSizeMake(100.f, 100.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(50.f, 50.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(1.f, 1.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(100.f, 50.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(50.f, 100.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(110.f, 40.f)],
+                        [Utility solidColorImageWithSize:CGSizeMake(40.f, 110.f)]];
+    
+    NSArray *maxResolutions = @[@(1000),
+                                @(100),
+                                @(60),
+                                @(40),
+                                @(10),
+                                @(1)];
+    
+    for (NSNumber *reso in maxResolutions) {
+        CGFloat maxResolutions = [reso unsignedIntegerValue];
+        for (UIImage *image in images) {
+            [self resizeOfMaxResolution:maxResolutions withImage:image];
+        }
+    }
+}
+
+- (void)resizeOfMaxResolution:(CGFloat)maxResolution withImage:(UIImage*)image
+{
+    for (NSNumber *qualityNum in [self qualities]) {
+        CGInterpolationQuality quality = [qualityNum integerValue];
+        for (NSNumber *maskNum in [self masks]) {
+            YSImageFilterMask mask = [maskNum integerValue];
+            
+            for (NSNumber *asyncNum in @[@NO, @YES]) {
+                BOOL async = [asyncNum boolValue];
+                YSImageFilter *filter = [[YSImageFilter alloc] init];
+                filter.maxResolution = maxResolution;
+                filter.quality = quality;
+                filter.mask = mask;
+                
+                __block UIImage *resizedImage;
+                if (async) {
+                    [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
+                        [image ys_filter:filter withCompletion:^(UIImage *filterdImage) {
+                            resizedImage = filterdImage;
+                            *finish = YES;
+                        }];
+                    } timeoutInterval:DBL_MAX];
+                } else {
+                    resizedImage = [image ys_filter:filter];
+                }
+                
+                CGSize imgSize = image.size;
+                CGSize resizedSize = resizedImage.size;
+                if (imgSize.width > maxResolution || imgSize.height > maxResolution) {
+                    if (imgSize.width > imgSize.height) {
+                        XCTAssertEqual(resizedSize.width, maxResolution, @"resizedSize: %@, maxResolution: %f", NSStringFromCGSize(resizedSize), maxResolution);
+                    } else{
+                        XCTAssertEqual(resizedSize.height, maxResolution, @"resizedSize: %@, maxResolution: %f", NSStringFromCGSize(resizedSize), maxResolution);
+                    }
+                } else {
+                    XCTAssertEqual(resizedSize.width, imgSize.width, @"resizedSize: %@, imgSize: %@", NSStringFromCGSize(resizedSize), NSStringFromCGSize(imgSize));
+                    XCTAssertEqual(resizedSize.height, imgSize.height, @"resizedSize: %@, imgSize: %@", NSStringFromCGSize(resizedSize), NSStringFromCGSize(imgSize));
+                }
+            }
+        }
+    }
+}
+
+#pragma mark - utility
+
+- (NSArray*)qualities
+{
+    return @[@(kCGInterpolationNone),
+             @(kCGInterpolationLow),
+             @(kCGInterpolationMedium),
+             @(kCGInterpolationHigh),
+             @(kCGInterpolationDefault)];
+}
+
+- (NSArray*)masks
+{
+    return @[@(YSImageFilterMaskNone),
+             @(YSImageFilterMaskRoundedCorners),
+             @(YSImageFilterMaskCircle)];
 }
 
 @end

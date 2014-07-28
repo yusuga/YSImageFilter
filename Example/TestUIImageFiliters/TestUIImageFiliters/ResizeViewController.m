@@ -101,43 +101,105 @@ typedef NS_ENUM(NSUInteger, Row) {
     BOOL trimToFit = self.trimSwitch.on;
     NSString *processName;
     SetImageProcess setImageProcess;
-    switch (indexPath.row) {
-        case RowResizeSimpleCoreGraphicsNone:
-        case RowResizeSimpleCoreGraphicsLow:
-        case RowResizeSimpleCoreGraphicsMedium:
-        case RowResizeSimpleCoreGraphicsHigh:
-        {
-            CGInterpolationQuality quality;
-            NSString *qualityStr;
+    switch (indexPath.section) {
+        case 0:
             switch (indexPath.row) {
                 case RowResizeSimpleCoreGraphicsNone:
-                    quality = kCGInterpolationNone;
-                    qualityStr = @"None";
-                    break;
                 case RowResizeSimpleCoreGraphicsLow:
-                    quality = kCGInterpolationLow;
-                    qualityStr = @"Low";
-                    break;
                 case RowResizeSimpleCoreGraphicsMedium:
-                    quality = kCGInterpolationMedium;
-                    qualityStr = @"Medium";
-                    break;
                 case RowResizeSimpleCoreGraphicsHigh:
-                    quality = kCGInterpolationHigh;
-                    qualityStr = @"High";
+                {
+                    CGInterpolationQuality quality;
+                    NSString *qualityStr;
+                    switch (indexPath.row) {
+                        case RowResizeSimpleCoreGraphicsNone:
+                            quality = kCGInterpolationNone;
+                            qualityStr = @"None";
+                            break;
+                        case RowResizeSimpleCoreGraphicsLow:
+                            quality = kCGInterpolationLow;
+                            qualityStr = @"Low";
+                            break;
+                        case RowResizeSimpleCoreGraphicsMedium:
+                            quality = kCGInterpolationMedium;
+                            qualityStr = @"Medium";
+                            break;
+                        case RowResizeSimpleCoreGraphicsHigh:
+                            quality = kCGInterpolationHigh;
+                            qualityStr = @"High";
+                            break;
+                        default:
+                            abort();
+                            break;
+                    }
+                    processName = [NSString stringWithFormat:@"set CoreGraphics(%@)", qualityStr];
+                    BOOL async = self.backgroundSwitch.on;
+                    setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
+                        YSImageFilter *filter = [[YSImageFilter alloc] init];
+                        filter.size = size;
+                        filter.quality = quality;
+                        filter.trimToFit = trimToFit;
+                        
+                        __block UIImage *resizedImage;
+                        if (async) {
+                            [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
+                                [sourceImage ys_filter:filter withCompletion:^(UIImage *filterdImage) {
+                                    resizedImage = filterdImage;
+                                    *finish = YES;
+                                }];
+                            } timeoutInterval:DBL_MAX];
+                        } else {
+                            resizedImage = [sourceImage ys_filter:filter];
+                        }
+                        return resizedImage;
+                    };
+                }
                     break;
+                case RowResizeNYXImagesKit:
+                {
+                    processName = [NSString stringWithFormat:@"set NYXImagesKit"];
+                    setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
+                        return [ImageFilter resizeInNYXImagesKitWithImage:sourceImage size:size trimToFit:trimToFit];
+                    };
+                }
+                    break;
+                case RowResizeGPUImage:
+                {
+                    processName = [NSString stringWithFormat:@"set GPUImage"];
+                    setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
+                        return [ImageFilter resizeInGPUImageWithImage:sourceImage size:size trimToFit:trimToFit];
+                    };
+                    break;
+                }
+                case RowResizeCoreImageCPU:
+                case RowResizeCoreImageGPU:
+                {
+                    BOOL useGPU = indexPath.row == RowResizeCoreImageGPU ? YES : NO;
+                    processName = [NSString stringWithFormat:@"set CoreImage(%@)", useGPU ? @"GPU" : @"CPU"];
+                    setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
+                        return [ImageFilter resizeInCoreImageWithImage:sourceImage size:size useGPU:useGPU trimToFit:trimToFit];
+                    };
+                    break;
+                }
                 default:
                     abort();
-                    break;
             }
-            processName = [NSString stringWithFormat:@"set CoreGraphics(%@)", qualityStr];
+            break;
+        case 1:
+        {
+            CGFloat maxResolution = 10.f;
+            if (indexPath.row) {
+                for (NSUInteger i = 0; i < indexPath.row; i++) {
+                    maxResolution *= 10;
+                }
+            }
+            
+            processName = [NSString stringWithFormat:@"set MaxResolution(%.0f)", maxResolution];
             BOOL async = self.backgroundSwitch.on;
             setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
                 YSImageFilter *filter = [[YSImageFilter alloc] init];
-                filter.size = size;
-                filter.quality = quality;
-                filter.trimToFit = trimToFit;
-
+                filter.maxResolution = maxResolution;
+                
                 __block UIImage *resizedImage;
                 if (async) {
                     [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
@@ -150,32 +212,6 @@ typedef NS_ENUM(NSUInteger, Row) {
                     resizedImage = [sourceImage ys_filter:filter];
                 }
                 return resizedImage;
-            };
-        }
-            break;
-        case RowResizeNYXImagesKit:
-        {
-            processName = [NSString stringWithFormat:@"set NYXImagesKit"];
-            setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
-                return [ImageFilter resizeInNYXImagesKitWithImage:sourceImage size:size trimToFit:trimToFit];
-            };
-        }
-            break;
-        case RowResizeGPUImage:
-        {
-            processName = [NSString stringWithFormat:@"set GPUImage"];
-            setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
-                return [ImageFilter resizeInGPUImageWithImage:sourceImage size:size trimToFit:trimToFit];
-            };
-            break;
-        }
-        case RowResizeCoreImageCPU:
-        case RowResizeCoreImageGPU:
-        {
-            BOOL useGPU = indexPath.row == RowResizeCoreImageGPU ? YES : NO;
-            processName = [NSString stringWithFormat:@"set CoreImage(%@)", useGPU ? @"GPU" : @"CPU"];
-            setImageProcess = ^UIImage *(UIImage *sourceImage, CGSize size) {
-                return [ImageFilter resizeInCoreImageWithImage:sourceImage size:size useGPU:useGPU trimToFit:trimToFit];
             };
             break;
         }
