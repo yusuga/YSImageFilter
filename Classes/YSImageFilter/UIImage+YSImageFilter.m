@@ -9,7 +9,8 @@
 #import "UIImage+YSImageFilter.h"
 
 #if DEBUG
-    #if 1
+    #if 0
+        #warning enable debug log
         #define LOG_YSIMAGE_FILTER(...) NSLog(__VA_ARGS__)
     #endif
 #endif
