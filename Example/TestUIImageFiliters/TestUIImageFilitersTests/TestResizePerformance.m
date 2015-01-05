@@ -9,7 +9,6 @@
 #import <XCTest/XCTest.h>
 #import "Utility.h"
 #import <YSProcessTimer/YSProcessTimer.h>
-#import <NSRunLoop+PerformBlock/NSRunLoop+PerformBlock.h>
 
 #import "UIImage+YSImageFilter.h"
 #import "ImageFilter.h"

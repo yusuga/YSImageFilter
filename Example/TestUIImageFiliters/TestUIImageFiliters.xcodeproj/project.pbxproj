@@ -55,7 +55,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		9EDEBE04B02547E0AFEE6654 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		6626B3348688F50ECE961B79 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		B81B75A818E59F0700E822F0 /* TestResizePerformance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestResizePerformance.m; sourceTree = "<group>"; };
 		B81B75AA18E5C83100E822F0 /* SepiaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SepiaViewController.h; sourceTree = "<group>"; };
 		B81B75AB18E5C83100E822F0 /* SepiaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SepiaViewController.m; sourceTree = "<group>"; };
@@ -109,6 +109,7 @@
 		B8D7350418E3B6BA004850C0 /* FiltersTopViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiltersTopViewController.h; sourceTree = "<group>"; };
 		B8D7350518E3B6BA004850C0 /* FiltersTopViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FiltersTopViewController.m; sourceTree = "<group>"; };
 		B8EADF3618E48AD10073E3EE /* TestUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtility.m; sourceTree = "<group>"; };
+		DE107B8F02718073F89D5844 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		DE8CAA8EA912426B9DD303E9 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -137,6 +138,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4CF198E2E0061743A00C932C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DE107B8F02718073F89D5844 /* Pods.debug.xcconfig */,
+				6626B3348688F50ECE961B79 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		B8D734AB18E29DFC004850C0 = {
 			isa = PBXGroup;
 			children = (
@@ -145,7 +155,7 @@
 				B8D734DC18E29DFC004850C0 /* TestUIImageFilitersTests */,
 				B8D734B618E29DFC004850C0 /* Frameworks */,
 				B8D734B518E29DFC004850C0 /* Products */,
-				9EDEBE04B02547E0AFEE6654 /* Pods.xcconfig */,
+				4CF198E2E0061743A00C932C /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -372,7 +382,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D6AADC8D96DC42108436843C /* Check Pods Manifest.lock */ = {
@@ -539,7 +549,7 @@
 		};
 		B8D734E718E29DFC004850C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9EDEBE04B02547E0AFEE6654 /* Pods.xcconfig */;
+			baseConfigurationReference = DE107B8F02718073F89D5844 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -567,8 +577,7 @@
 					OpenGLES,
 					"-framework",
 					QuartzCore,
-					"-framework",
-					SenTestingKit,
+					"$(inherited)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -577,7 +586,7 @@
 		};
 		B8D734E818E29DFC004850C0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9EDEBE04B02547E0AFEE6654 /* Pods.xcconfig */;
+			baseConfigurationReference = 6626B3348688F50ECE961B79 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -605,8 +614,7 @@
 					OpenGLES,
 					"-framework",
 					QuartzCore,
-					"-framework",
-					SenTestingKit,
+					"$(inherited)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

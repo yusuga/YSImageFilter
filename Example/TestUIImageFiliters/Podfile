@@ -1,6 +1,9 @@
-pod 'YSProcessTimer'
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/yusuga/Specs.git'
+
+platform :ios, '7.0'
 pod 'NYXImagesKit'
 pod 'GPUImage'
-pod 'YSUIKitAdditions'
 pod 'NSRunLoop+PerformBlock'
-pod 'TKRGuard'
+pod 'YSUIKitAdditions'
+pod 'YSProcessTimer'
