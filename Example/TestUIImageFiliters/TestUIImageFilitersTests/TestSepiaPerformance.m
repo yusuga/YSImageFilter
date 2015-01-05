@@ -18,63 +18,129 @@
 
 @implementation TestSepiaPerformance
 
-- (void)testAllAverageWithCatImage500x500
+#pragma mark - CoreImage
+#pragma mark CPU
+
+- (void)testCoreImageWithImage500x500
 {
-    [self allAverageWithImage:[Utility catImageWithSize:CGSizeMake(500.f, 500.f)]];
+    BOOL useGPU = NO;
+    UIImage *image = [self imageInCoreImageWithSourceSize:500.f useGPU:useGPU];
+    
+    [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+        [self startMeasuring];
+        [ImageFilter sepiaInCoreImageWithImage:image intensity:1.f useGPU:useGPU];
+        [self stopMeasuring];
+    }];
 }
 
-- (void)testAllAverageWithCatImage50x50
+- (void)testCoreImageWithImage50x50
 {
-    [self allAverageWithImage:[Utility catImageWithSize:CGSizeMake(50.f, 50.f)]];
+    BOOL useGPU = NO;
+    UIImage *image = [self imageInCoreImageWithSourceSize:50.f useGPU:useGPU];
+    
+    [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+        [self startMeasuring];
+        [ImageFilter sepiaInCoreImageWithImage:image intensity:1.f useGPU:useGPU];
+        [self stopMeasuring];
+    }];
 }
 
-- (void)allAverageWithImage:(UIImage*)sourceImage
+#pragma mark GPU
+
+- (void)testCoreImageWithGPUWithImage500x500
 {
-    /* Idling */
-    // CoreImage
-    [ImageFilter sepiaInCoreImageWithImage:sourceImage intensity:1.f useGPU:NO];
-    [ImageFilter sepiaInCoreImageWithImage:sourceImage intensity:1.f useGPU:YES];
+    BOOL useGPU = YES;
+    UIImage *image = [self imageInCoreImageWithSourceSize:500.f useGPU:useGPU];
     
-    // NYXImagesKit
-    [ImageFilter sepiaInNYXImagesKitWithImage:sourceImage];
-    
-    // GPUImage
-    [ImageFilter sepiaInGPUImageWithImage:sourceImage];
-    
-    CGFloat intensity = 1.f;
-    NSTimeInterval coreImageTimeCPU = [self averageCoreImageWithImage:sourceImage intensity:intensity useGPU:NO];
-    NSTimeInterval coreImageTimeGPU = [self averageCoreImageWithImage:sourceImage intensity:intensity useGPU:YES];
-    
-    NSTimeInterval NYXImagesKitTime = [YSProcessTimer startAverageWithProcessName:@"average NYXImagesKit" numberOfTrials:kNumberOfTrials process:^{
-        [ImageFilter sepiaInNYXImagesKitWithImage:sourceImage];
+    [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+        [self startMeasuring];
+        [ImageFilter sepiaInCoreImageWithImage:image intensity:1.f useGPU:useGPU];
+        [self stopMeasuring];
     }];
-    
-    NSTimeInterval GPUImageTime = [YSProcessTimer startAverageWithProcessName:@"average GPUImage" numberOfTrials:kNumberOfTrials process:^{
-        [ImageFilter sepiaInGPUImageWithImage:sourceImage];
-    }];
-    NSLog(@"\n\n\
-sourceImage.size: %@\n\
-CoreImage(CPU) %f (%@ FPS)\n\
-CoreImage(GPU) %f (%@ FPS)\n\
-NYXImagesKit %f (%@ FPS)\n\
-GPUImage %f (%@ FPS)\n\n",
-          NSStringFromCGSize(sourceImage.size),
-          coreImageTimeCPU,
-          @(((int)(1/coreImageTimeCPU))),
-          coreImageTimeGPU,
-          @(((int)(1/coreImageTimeGPU))),
-          NYXImagesKitTime,
-          @(((int)(1/NYXImagesKitTime))),
-          GPUImageTime,
-          @(((int)(1/GPUImageTime))));
 }
 
-- (NSTimeInterval)averageCoreImageWithImage:(UIImage*)image intensity:(CGFloat)intensity useGPU:(BOOL)useGPU
+- (void)testCoreImageWithGPUWithImage50x50
 {
-    NSString *name = [NSString stringWithFormat:@"average CoreImage(%@)", useGPU ? @"GPU" : @"CPU"];
-    return [YSProcessTimer startAverageWithProcessName:name numberOfTrials:kNumberOfTrials process:^{
-        [ImageFilter sepiaInCoreImageWithImage:image intensity:intensity useGPU:useGPU];
+    BOOL useGPU = YES;
+    UIImage *image = [self imageInCoreImageWithSourceSize:50.f useGPU:useGPU];
+    
+    [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+        [self startMeasuring];
+        [ImageFilter sepiaInCoreImageWithImage:image intensity:1.f useGPU:useGPU];
+        [self stopMeasuring];
     }];
+}
+
+#pragma mark - NYXImagesKit
+
+- (void)testNYXImagesKitWithGPUWithImage500x500
+{
+    UIImage *image = [self imageInNYXImagesKitWithSourceSize:500.f];
+    
+    [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+        [self startMeasuring];
+        [ImageFilter sepiaInNYXImagesKitWithImage:image];
+        [self stopMeasuring];
+    }];
+}
+
+- (void)testNYXImagesKitWithGPUWithImage50x50
+{
+    UIImage *image = [self imageInNYXImagesKitWithSourceSize:50.f];
+    
+    [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+        [self startMeasuring];
+        [ImageFilter sepiaInNYXImagesKitWithImage:image];
+        [self stopMeasuring];
+    }];
+}
+
+#pragma mark - GPUImage
+
+- (void)testGPUImageWithGPUWithImage500x500
+{
+    UIImage *image = [self imageInGPUImageWithSourceSize:500.f];
+    
+    [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+        [self startMeasuring];
+        [ImageFilter sepiaInGPUImageWithImage:image];
+        [self stopMeasuring];
+    }];
+}
+
+- (void)testGPUImageWithGPUWithImage50x50
+{
+    UIImage *image = [self imageInGPUImageWithSourceSize:50.f];
+    
+    [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+        [self startMeasuring];
+        [ImageFilter sepiaInGPUImageWithImage:image];
+        [self stopMeasuring];
+    }];
+}
+
+#pragma mark - Utility
+
+- (UIImage*)imageInCoreImageWithSourceSize:(CGFloat)sourceSize
+                                    useGPU:(BOOL)useGPU
+{
+    UIImage *image = [Utility catImageWithSize:CGSizeMake(sourceSize, sourceSize)];
+    [ImageFilter sepiaInCoreImageWithImage:image intensity:1.f useGPU:useGPU];
+    return image;
+}
+
+- (UIImage*)imageInNYXImagesKitWithSourceSize:(CGFloat)sourceSize
+{
+    UIImage *image = [Utility catImageWithSize:CGSizeMake(sourceSize, sourceSize)];
+    [ImageFilter sepiaInNYXImagesKitWithImage:image];
+    return image;
+}
+
+- (UIImage*)imageInGPUImageWithSourceSize:(CGFloat)sourceSize
+{
+    UIImage *image = [Utility catImageWithSize:CGSizeMake(sourceSize, sourceSize)];
+    [ImageFilter sepiaInGPUImageWithImage:image];
+    return image;
 }
 
 @end

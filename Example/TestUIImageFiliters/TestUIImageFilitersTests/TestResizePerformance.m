@@ -32,205 +32,679 @@
     [super tearDown];
 }
 
-- (void)testAllAverageWithImage1000x1000to300x300
+#pragma mark - CoreGraphics
+#pragma mark None - 50x50
+
+- (void)testCoreGraphicsWithQualityNoneWithSolidColorImage1000x1000to50x50
 {
-    [self allAverageWithSourceImageSize:CGSizeMake(1000.f, 1000.f) resizeSize:CGSizeMake(300.f, 300.f) trimToFit:NO];
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationNone resize:50.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
 }
 
-- (void)testAllAverageTrimToFitWithImage1000x1000to300x300
+- (void)testCoreGraphicsWithQualityNoneWithCatImage1000x1000to50x50
 {
-    [self allAverageWithSourceImageSize:CGSizeMake(1000.f, 1000.f) resizeSize:CGSizeMake(300.f, 300.f) trimToFit:YES];
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationNone resize:50.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
 }
 
-- (void)testAllAverageWithImage1000x1000To50x50
+- (void)testCoreGraphicsWithQualityNoneAndTrimToFitWithSolidColorImage1000x1000to50x50
 {
-    [self allAverageWithSourceImageSize:CGSizeMake(1000.f, 1000.f) resizeSize:CGSizeMake(50.f, 50.f) trimToFit:NO];
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationNone resize:50.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
 }
 
-- (void)testAllAverageTrimToFitWithImage1000x1000To50x50
+- (void)testCoreGraphicsWithQualityNoneAndTrimToFitWithCatImage1000x1000to50x50
 {
-    [self allAverageWithSourceImageSize:CGSizeMake(1000.f, 1000.f) resizeSize:CGSizeMake(50.f, 50.f) trimToFit:YES];
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationNone resize:50.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
 }
 
-- (void)allAverageWithSourceImageSize:(CGSize)sourceImageSize resizeSize:(CGSize)resizeSize trimToFit:(BOOL)trimToFit
+#pragma mark None - 300x300
+
+- (void)testCoreGraphicsWithQualityNoneWithSolidColorImage1000x1000to300x300
 {
-    [self allAverageWithSourceImageName:@"SolidColor"
-                                  image:[Utility solidColorImageWithSize:sourceImageSize]
-                             resizeSize:resizeSize
-                              trimToFit:trimToFit];
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationNone resize:300.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityNoneWithCatImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationNone resize:300.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityNoneAndTrimToFitWithSolidColorImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationNone resize:300.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityNoneAndTrimToFitWithCatImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationNone resize:300.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+#pragma mark Low - 50x50
+
+- (void)testCoreGraphicsWithQualityLowWithSolidColorImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationLow resize:50.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityLowWithCatImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationLow resize:50.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityLowAndTrimToFitWithSolidColorImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationLow resize:50.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityLowAndTrimToFitWithCatImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationLow resize:50.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+#pragma mark Low - 300x300
+
+- (void)testCoreGraphicsWithQualityLowWithSolidColorImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationLow resize:300.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityLowWithCatImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationLow resize:300.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityLowAndTrimToFitWithSolidColorImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationLow resize:300.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityLowAndTrimToFitWithCatImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationLow resize:300.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+#pragma mark Medium - 50x50
+
+- (void)testCoreGraphicsWithQualityMediumWithSolidColorImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationMedium resize:50.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityMediumWithCatImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationMedium resize:50.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityMediumAndTrimToFitWithSolidColorImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationMedium resize:50.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityMediumAndTrimToFitWithCatImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationMedium resize:50.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+#pragma mark Medium - 300x300
+
+- (void)testCoreGraphicsWithQualityMediumWithSolidColorImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationMedium resize:300.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityMediumWithCatImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationMedium resize:300.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityMediumAndTrimToFitWithSolidColorImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationMedium resize:300.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityMediumAndTrimToFitWithCatImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationMedium resize:300.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+#pragma mark High - 50x50
+
+- (void)testCoreGraphicsWithQualityHighWithSolidColorImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationHigh resize:50.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityHighWithCatImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationHigh resize:50.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityHighAndTrimToFitWithSolidColorImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationHigh resize:50.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityHighAndTrimToFitWithCatImage1000x1000to50x50
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationHigh resize:50.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+#pragma mark High - 300x300
+
+- (void)testCoreGraphicsWithQualityHighWithSolidColorImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationHigh resize:300.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityHighWithCatImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationHigh resize:300.f trimToFit:NO completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityHighAndTrimToFitWithSolidColorImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeSolidColor sourceSize:1000.f quality:kCGInterpolationHigh resize:300.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreGraphicsWithQualityHighAndTrimToFitWithCatImage1000x1000to300x300
+{
+    [self imageAndFilterInCoreGraphicsWithImageType:ImageTypeCat sourceSize:1000.f quality:kCGInterpolationHigh resize:300.f trimToFit:YES completion:^(UIImage *image, YSImageFilter *filter) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [image ys_filter:filter];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+#pragma mark - CoreImage
+#pragma mark CPU
+
+- (void)testCoreImageWithSolidColorImage1000x1000to50x50
+{
+    CGSize resize = CGSizeMake(50.f, 50.f);
+    BOOL trimToFit = NO;
+    BOOL useGPU = NO;
     
+    [self imageInCoreImageWithImageType:ImageTypeSolidColor sourceSize:1000.f resize:resize trimToFit:trimToFit useGPU:useGPU completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInCoreImageWithImage:image size:resize useGPU:useGPU trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreImageWithCatImage1000x1000to50x50
+{
+    CGSize resize = CGSizeMake(50.f, 50.f);
+    BOOL trimToFit = NO;
+    BOOL useGPU = NO;
     
-    [self allAverageWithSourceImageName:@"Cat"
-                                  image:[Utility catImageWithSize:sourceImageSize]
-                             resizeSize:resizeSize
-                              trimToFit:trimToFit];
+    [self imageInCoreImageWithImageType:ImageTypeCat sourceSize:1000.f resize:resize trimToFit:trimToFit useGPU:useGPU completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInCoreImageWithImage:image size:resize useGPU:useGPU trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
 }
 
-#pragma mark - cpu busy
-
-#if 0
-- (void)testCPUBusy
+- (void)testCoreImageWithTrimToFitWithSolidColorImage1000x1000to300x300
 {
-    [self enumeratePrimeInBackground:10];
-    [NSThread sleepForTimeInterval:3.0];
-    [self testAllAverageTrimToFitWithImage1000x1000To50x50];
+    CGSize resize = CGSizeMake(300.f, 300.f);
+    BOOL trimToFit = NO;
+    BOOL useGPU = NO;
+    
+    [self imageInCoreImageWithImageType:ImageTypeSolidColor sourceSize:1000.f resize:resize trimToFit:trimToFit useGPU:useGPU completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInCoreImageWithImage:image size:resize useGPU:useGPU trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
 }
 
-- (void)enumeratePrimeInBackground:(NSUInteger)threadNum
+- (void)testCoreImageWithTrimToFitWithCatImage1000x1000to300x300
 {
-    for (NSUInteger thread = 0; thread < threadNum; thread++) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            for (NSUInteger i = 2; i < NSUIntegerMax; i++) {
-                BOOL isPrime = [self searchPrime:i];
-                if (isPrime) {
-//                    NSLog(@"prime %@", @(i));
-                }
-            }
-        });
-    }
+    CGSize resize = CGSizeMake(300.f, 300.f);
+    BOOL trimToFit = NO;
+    BOOL useGPU = NO;
+    
+    [self imageInCoreImageWithImageType:ImageTypeCat sourceSize:1000.f resize:resize trimToFit:trimToFit useGPU:useGPU completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInCoreImageWithImage:image size:resize useGPU:useGPU trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
 }
 
-- (BOOL)searchPrime:(NSUInteger)num
+#pragma mark GPU
+
+- (void)testCoreImageWithUseGPUWithSolidColorImage1000x1000to50x50
 {
-    for(NSUInteger i = 2; i*i <= num; i++){
-        if(num%i == 0){
-            return NO;
-        }
-    }
-    return YES;
+    CGSize resize = CGSizeMake(50.f, 50.f);
+    BOOL trimToFit = NO;
+    BOOL useGPU = YES;
+    
+    [self imageInCoreImageWithImageType:ImageTypeSolidColor sourceSize:1000.f resize:resize trimToFit:trimToFit useGPU:useGPU completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInCoreImageWithImage:image size:resize useGPU:useGPU trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
 }
-#endif
 
-#pragma mark - average
-
-- (void)allAverageWithSourceImageName:(NSString*)sourceImageName image:(UIImage*)sourceImage resizeSize:(CGSize)resizeSize trimToFit:(BOOL)trimToFit
+- (void)testCoreImageWithUseGPUWithCatImage1000x1000to50x50
 {
-    /* Idling */
-    // CoreGraphics
+    CGSize resize = CGSizeMake(50.f, 50.f);
+    BOOL trimToFit = NO;
+    BOOL useGPU = YES;
+    
+    [self imageInCoreImageWithImageType:ImageTypeCat sourceSize:1000.f resize:resize trimToFit:trimToFit useGPU:useGPU completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInCoreImageWithImage:image size:resize useGPU:useGPU trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreImageWithUseGPUWithTrimToFitWithSolidColorImage1000x1000to300x300
+{
+    CGSize resize = CGSizeMake(300.f, 300.f);
+    BOOL trimToFit = NO;
+    BOOL useGPU = YES;
+    
+    [self imageInCoreImageWithImageType:ImageTypeSolidColor sourceSize:1000.f resize:resize trimToFit:trimToFit useGPU:useGPU completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInCoreImageWithImage:image size:resize useGPU:useGPU trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testCoreImageWithUseGPUWithTrimToFitWithCatImage1000x1000to300x300
+{
+    CGSize resize = CGSizeMake(300.f, 300.f);
+    BOOL trimToFit = NO;
+    BOOL useGPU = YES;
+    
+    [self imageInCoreImageWithImageType:ImageTypeCat sourceSize:1000.f resize:resize trimToFit:trimToFit useGPU:useGPU completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInCoreImageWithImage:image size:resize useGPU:useGPU trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+#pragma mark - NYXImagesKit
+
+- (void)testNYXImagesKitWithSolidColorImage1000x1000to50x50
+{
+    CGSize resize = CGSizeMake(50.f, 50.f);
+    BOOL trimToFit = NO;
+    
+    [self imageInNYXImagesKitWithImageType:ImageTypeSolidColor sourceSize:1000.f resize:resize trimToFit:trimToFit completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInNYXImagesKitWithImage:image size:resize trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testNYXImagesKitWithCatImage1000x1000to50x50
+{
+    CGSize resize = CGSizeMake(50.f, 50.f);
+    BOOL trimToFit = NO;
+    
+    [self imageInNYXImagesKitWithImageType:ImageTypeCat sourceSize:1000.f resize:resize trimToFit:trimToFit completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInNYXImagesKitWithImage:image size:resize trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testNYXImagesKitWithTrimToFitWithSolidColorImage1000x1000to300x300
+{
+    CGSize resize = CGSizeMake(300.f, 300.f);
+    BOOL trimToFit = YES;
+    
+    [self imageInNYXImagesKitWithImageType:ImageTypeSolidColor sourceSize:1000.f resize:resize trimToFit:trimToFit completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInNYXImagesKitWithImage:image size:resize trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testNYXImagesKitWithTrimToFitWithCatImage1000x1000to300x300
+{
+    CGSize resize = CGSizeMake(300.f, 300.f);
+    BOOL trimToFit = YES;
+    
+    [self imageInNYXImagesKitWithImageType:ImageTypeCat sourceSize:1000.f resize:resize trimToFit:trimToFit completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInNYXImagesKitWithImage:image size:resize trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+#pragma mark - GPUImage
+
+- (void)testGPUImageWithSolidColorImage1000x1000to50x50
+{
+    CGSize resize = CGSizeMake(50.f, 50.f);
+    BOOL trimToFit = NO;
+    
+    [self imageInGPUImageWithImageType:ImageTypeSolidColor sourceSize:1000.f resize:resize trimToFit:trimToFit completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInNYXImagesKitWithImage:image size:resize trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testGPUImageWithCatImage1000x1000to50x50
+{
+    CGSize resize = CGSizeMake(50.f, 50.f);
+    BOOL trimToFit = NO;
+    
+    [self imageInGPUImageWithImageType:ImageTypeCat sourceSize:1000.f resize:resize trimToFit:trimToFit completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInNYXImagesKitWithImage:image size:resize trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testGPUImageWithTrimToFitWithSolidColorImage1000x1000to300x300
+{
+    CGSize resize = CGSizeMake(300.f, 300.f);
+    BOOL trimToFit = YES;
+    
+    [self imageInGPUImageWithImageType:ImageTypeSolidColor sourceSize:1000.f resize:resize trimToFit:trimToFit completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInNYXImagesKitWithImage:image size:resize trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+- (void)testGPUImageWithTrimToFitWithCatImage1000x1000to300x300
+{
+    CGSize resize = CGSizeMake(300.f, 300.f);
+    BOOL trimToFit = YES;
+    
+    [self imageInGPUImageWithImageType:ImageTypeCat sourceSize:1000.f resize:resize trimToFit:trimToFit completion:^(UIImage *image) {
+        [self measureMetrics:[XCTestCase defaultPerformanceMetrics] automaticallyStartMeasuring:NO forBlock:^{
+            [self startMeasuring];
+            [ImageFilter resizeInNYXImagesKitWithImage:image size:resize trimToFit:trimToFit];
+            [self stopMeasuring];
+        }];
+    }];
+}
+
+
+#pragma mark - Utility
+
+- (void)imageAndFilterInCoreGraphicsWithImageType:(ImageType)imageType
+                                       sourceSize:(CGFloat)sourceSize
+                                          quality:(CGInterpolationQuality)quality
+                                           resize:(CGFloat)resize
+                                        trimToFit:(BOOL)trimToFit
+                                       completion:(void(^)(UIImage *image, YSImageFilter *filter))completion
+{
+    UIImage *image = [Utility imageWithSize:CGSizeMake(sourceSize, sourceSize) type:imageType];
+    
     YSImageFilter *filter = [[YSImageFilter alloc] init];
-    filter.size = resizeSize;
-    filter.quality = kCGInterpolationNone;
-    filter.trimToFit = trimToFit;
     filter.mask = YSImageFilterMaskNone;
     
-    [sourceImage ys_filter:filter];
+    filter.quality = quality;
+    filter.size = CGSizeMake(resize, resize);
+    filter.trimToFit = trimToFit;
     
-    filter.quality = kCGInterpolationLow;
-    [sourceImage ys_filter:filter];
+    // Idling
+    [image ys_filter:filter];
     
-    filter.quality = kCGInterpolationMedium;
-    [sourceImage ys_filter:filter];
-    
-    filter.quality = kCGInterpolationHigh;
-    [sourceImage ys_filter:filter];
-    
-    // NYXImagesKit
-    [ImageFilter resizeInNYXImagesKitWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
-    
-    // GPUImage
-    [ImageFilter resizeInGPUImageWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
-    
-    // CoreImage
-    [ImageFilter resizeInCoreImageWithImage:sourceImage size:resizeSize useGPU:NO trimToFit:trimToFit];
-    [ImageFilter resizeInCoreImageWithImage:sourceImage size:resizeSize useGPU:YES trimToFit:trimToFit];
-    
-    NSTimeInterval coreGraphicsTimeNone = [self averageCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationNone trimToFit:trimToFit];
-    NSTimeInterval coreGraphicsTimeLow = [self averageCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationLow trimToFit:trimToFit];
-    NSTimeInterval coreGraphicsTimeMedium = [self averageCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationMedium trimToFit:trimToFit];
-    NSTimeInterval coreGraphicsTimeHigh = [self averageCoreGraphicsWithImage:sourceImage size:resizeSize quality:kCGInterpolationHigh trimToFit:trimToFit];
-    NSTimeInterval NYXImagesKitTime = [self averageNYXImagesKitWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
-    NSTimeInterval GPUImageTime = [self averageGPUImageWithImage:sourceImage size:resizeSize trimToFit:trimToFit];
-    NSTimeInterval ciImageTimeCPU = [self averageCoreImageWithImage:sourceImage size:resizeSize useGPU:NO trimToFit:trimToFit];
-    NSTimeInterval ciImageTimeGPU = [self averageCoreImageWithImage:sourceImage size:resizeSize useGPU:YES trimToFit:trimToFit];
-
-    NSLog(@"\n\n\
-name: %@, sourceImage.size: %@, resizeSize: %@, trimToFit: %@, numberOfTrials: %@\n\
-CoreGraphics(None) %f (%@ FPS)\n\
-CoreGraphics(Low) %f (%@ FPS)\n\
-CoreGraphics(Mid) %f (%@ FPS)\n\
-CoreGraphics(High) %f (%@ FPS)\n\
-NYXImagesKit %f (%@ FPS)\n\
-GPUImage %f (%@ FPS)\n\
-CoreImage(CPU) %f (%@ FPS)\n\
-CoreImage(GPU) %f (%@ FPS)\n\n",
-          sourceImageName,
-          NSStringFromCGSize(sourceImage.size),
-          NSStringFromCGSize(resizeSize),
-          trimToFit ? @"YES" : @"NO",
-          @(kNumberOfTrials),
-          coreGraphicsTimeNone,
-          @(((int)(1/coreGraphicsTimeNone))),
-          coreGraphicsTimeLow,
-          @(((int)(1/coreGraphicsTimeLow))),
-          coreGraphicsTimeMedium,
-          @(((int)(1/coreGraphicsTimeMedium))),
-          coreGraphicsTimeHigh,
-          @(((int)(1/coreGraphicsTimeHigh))),
-          NYXImagesKitTime,
-          @(((int)(1/NYXImagesKitTime))),
-          GPUImageTime,
-          @(((int)(1/GPUImageTime))),
-          ciImageTimeCPU,
-          @(((int)(1/ciImageTimeCPU))),
-          ciImageTimeGPU,
-          @(((int)(1/ciImageTimeGPU))));
+    completion(image, filter);
 }
 
-#pragma mark - average
-
-- (NSTimeInterval)averageCoreGraphicsWithImage:(UIImage*)image size:(CGSize)size quality:(CGInterpolationQuality)quality trimToFit:(BOOL)trimToFit
+- (void)imageInCoreImageWithImageType:(ImageType)imageType
+                           sourceSize:(CGFloat)sourceSize
+                               resize:(CGSize)resize
+                            trimToFit:(BOOL)trimToFit
+                               useGPU:(BOOL)useGPU
+                           completion:(void(^)(UIImage *image))completion
 {
-    NSString *qualityStr;
-    switch (quality) {
-        case kCGInterpolationNone:
-            qualityStr = @"None";
-            break;
-        case kCGInterpolationLow:
-            qualityStr = @"Low";
-            break;
-        case kCGInterpolationMedium:
-            qualityStr = @"Medium";
-            break;
-        case kCGInterpolationHigh:
-            qualityStr = @"High";
-            break;
-        case kCGInterpolationDefault:
-            qualityStr = @"Default";
-            break;
-        default:
-            qualityStr = @"Unknown";
-            break;
-    }
-    NSString *name = [NSString stringWithFormat:@"average CoreGraphics(%@), resize: %@", qualityStr, NSStringFromCGSize(size)];
-    return [YSProcessTimer startAverageWithProcessName:name numberOfTrials:kNumberOfTrials process:^{
-        YSImageFilter *filter = [[YSImageFilter alloc] init];
-        filter.size = size;
-        filter.quality = quality;
-        filter.trimToFit = trimToFit;
-        
-        [image ys_filter:filter];
-    }];
+    UIImage *image = [Utility imageWithSize:CGSizeMake(sourceSize, sourceSize) type:imageType];
+    
+    [ImageFilter resizeInCoreImageWithImage:image size:resize useGPU:useGPU trimToFit:trimToFit];
+    
+    completion(image);
 }
 
-- (NSTimeInterval)averageNYXImagesKitWithImage:(UIImage*)image size:(CGSize)size trimToFit:(BOOL)trimToFit
+- (void)imageInNYXImagesKitWithImageType:(ImageType)imageType
+                              sourceSize:(CGFloat)sourceSize
+                                  resize:(CGSize)resize
+                               trimToFit:(BOOL)trimToFit
+                              completion:(void(^)(UIImage *image))completion
 {
-    return [YSProcessTimer startAverageWithProcessName:@"average NYXImagesKit" numberOfTrials:kNumberOfTrials process:^{
-        [ImageFilter resizeInNYXImagesKitWithImage:image size:size trimToFit:trimToFit];
-    }];
+    UIImage *image = [Utility imageWithSize:CGSizeMake(sourceSize, sourceSize) type:imageType];
+    
+    [ImageFilter resizeInNYXImagesKitWithImage:image size:resize trimToFit:trimToFit];
+    
+    completion(image);
 }
 
-- (NSTimeInterval)averageGPUImageWithImage:(UIImage*)image size:(CGSize)size trimToFit:(BOOL)trimToFit
+- (void)imageInGPUImageWithImageType:(ImageType)imageType
+                              sourceSize:(CGFloat)sourceSize
+                                  resize:(CGSize)resize
+                               trimToFit:(BOOL)trimToFit
+                              completion:(void(^)(UIImage *image))completion
 {
-    return [YSProcessTimer startAverageWithProcessName:@"average GPUImage" numberOfTrials:kNumberOfTrials process:^{
-        [ImageFilter resizeInGPUImageWithImage:image size:size trimToFit:trimToFit];
-    }];
-}
-
-- (NSTimeInterval)averageCoreImageWithImage:(UIImage*)image size:(CGSize)size useGPU:(BOOL)useGPU trimToFit:(BOOL)trimToFit
-{
-    return [YSProcessTimer startAverageWithProcessName:@"average GPUImage" numberOfTrials:kNumberOfTrials process:^{
-        [ImageFilter resizeInCoreImageWithImage:image size:size useGPU:useGPU trimToFit:trimToFit];
-    }];
+    UIImage *image = [Utility imageWithSize:CGSizeMake(sourceSize, sourceSize) type:imageType];
+    
+    [ImageFilter resizeInGPUImageWithImage:image size:resize trimToFit:trimToFit];
+    
+    completion(image);
 }
 
 @end

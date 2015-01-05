@@ -14,6 +14,19 @@ NSUInteger const kNumberOfTrials = 100;
 
 @implementation Utility
 
++ (UIImage *)imageWithSize:(CGSize)size type:(ImageType)type
+{
+    switch (type) {
+        case ImageTypeSolidColor:
+            return [self solidColorImageWithSize:size];
+            case ImageTypeCat:
+            return [self catImageWithSize:size];
+        default:
+            NSAssert1(false, @"Unsupported image type = %zd;", type);
+            return nil;
+    }
+}
+
 + (UIImage*)solidColorImageWithSize:(CGSize)size
 {
     return [UIImage ys_imageFromColor:[UIColor redColor] withSize:size];
