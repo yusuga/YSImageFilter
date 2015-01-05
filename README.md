@@ -1,6 +1,50 @@
 #YSImageFilter
 
-UIImage filter. Allows filtering, resizing, masking.
+UIImage filter. Allows resizing, masking, border, background color.
+
+##Interface
+
+```
+typedef void(^YSImageFilterComletion)(UIImage *filteredImage);
+
+// Sync
+- (UIImage*)ys_filter:(YSImageFilter*)filter;
+
+// Async
+- (void)ys_filter:(YSImageFilter*)filter
+   withCompletion:(YSImageFilterComletion)completion;
+```
+
+##Usage
+
+```
+YSImageFilter *filter = [[YSImageFilter alloc] init];
+filter.size = CGSizeMake(200.f, 200.f);
+filter.quality = kCGInterpolationHigh;
+filter.trimToFit = YES;
+filter.borderColor = [UIColor redColor];
+filter.borderWidth = 5.f;
+filter.mask = YSImageFilterMaskRoundedCorners;
+filter.maskCornerRadius = 30.f;
+
+UIImage *filteredImage = [image ys_filter:filter];
+```
+![filter_resize_org](README/Assets/filter_resize_org.png) → ![filter_resize](README/Assets/filter_resize.png)
+
+```
+YSImageFilter *filter = [[YSImageFilter alloc] init];
+filter.backgroundColor = color;
+
+UIImage *filteredImage = [image ys_filter:filter];
+```
+
+![filter_bgcolor_org](README/Assets/filter_bgcolor_org.png)	→	![filter_bgcolor](README/Assets/filter_bgcolor.png)
+
+##Installation
+
+```
+pod 'YSImageFilter', :git => 'https://github.com/yusuga/YSImageFilter.git'
+```
 
 #Example - TestUIImageFilters
 
@@ -119,32 +163,32 @@ CoreGraphics vs [NYXImagesKit](https://github.com/Nyx0uf/NYXImagesKit) vs [GPUIm
 
     GTMUIImage+Resize.m
     Copyright 2009 Google Inc.
-    
+
     Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at
-     
+
     http://www.apache.org/licenses/LICENSE-2.0
- 
+
     Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the License for the specific language governing permissions and limitations under the License.
 
     ***
 
     Copyright &copy; 2014 Yu Sugawara (https://github.com/yusuga)
-    Licensed under the MIT License.    
+    Licensed under the MIT License.
 
-    Permission is hereby granted, free of charge, to any person obtaining a 
+    Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
     to deal in the Software without restriction, including without limitation
     the rights to use, copy, modify, merge, publish, distribute, sublicense,
     and/or sell copies of the Software, and to permit persons to whom the
     Software is furnished to do so, subject to the following conditions:
-    
+
     The above copyright notice and this permission notice shall be included in
     all copies or substantial portions of the Software.
 
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-    DEALINGS IN THE SOFTWARE.    
+    DEALINGS IN THE SOFTWARE.
