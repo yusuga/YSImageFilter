@@ -32,7 +32,17 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     [super tearDown];
 }
 
-#pragma mark - test CoreGraphics
+#pragma mark - Filter
+
+- (void)testFilterNil
+{
+    CGSize size = CGSizeMake(50.f, 50.f);
+    
+    UIImage *image = [Utility catImageWithSize:size];
+    XCTAssertTrue(CGSizeEqualToSize([image ys_filter:nil].size, size));
+}
+
+#pragma mark - CoreGraphics
 
 - (void)testResizeSquareInCoreGraphics
 {
@@ -55,7 +65,7 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     }];
 }
 
-#pragma mark - test NYXImagesKit
+#pragma mark - NYXImagesKit
 
 - (void)testResizeSquareInNYXImagesKit
 {
@@ -99,7 +109,7 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     }];
 }
 
-#pragma mark - test CoreImage
+#pragma mark - CoreImage
 
 - (void)testResizeSquareInCoreImage
 {
@@ -134,7 +144,7 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     }];
 }
 
-#pragma mark - resize process
+#pragma mark - Resize process
 
 - (BOOL)resizeInCoreGraphicsWithImage:(UIImage*)image size:(CGSize)size
 {
@@ -206,7 +216,7 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     return YES;
 }
 
-#pragma mark - quadrangle process
+#pragma mark - Quadrangle process
 
 - (void)resizeSquareWithProcess:(QuadrangleProcess)process
 {
@@ -244,7 +254,7 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     }
 }
 
-#pragma mark - validate
+#pragma mark - Validate
 
 - (BOOL)validateResizedImageWithSourceImage:(UIImage*)sourceImage
                                  resizeSize:(CGSize)resizeSize
@@ -291,7 +301,7 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     return YES;
 }
 
-#pragma mark - test max resolution
+#pragma mark - Max resolution
 
 - (void)testResizeOfMaxResolution
 {
@@ -361,7 +371,7 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
     }
 }
 
-#pragma mark - utility
+#pragma mark - Utility
 
 - (NSArray*)qualities
 {
