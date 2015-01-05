@@ -143,8 +143,8 @@ typedef NS_ENUM(NSUInteger, Row) {
                         __block UIImage *resizedImage;
                         if (async) {
                             [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
-                                [sourceImage ys_filter:filter withCompletion:^(UIImage *filterdImage) {
-                                    resizedImage = filterdImage;
+                                [sourceImage ys_filter:filter withCompletion:^(UIImage *filteredImage) {
+                                    resizedImage = filteredImage;
                                     *finish = YES;
                                 }];
                             } timeoutInterval:DBL_MAX];
@@ -203,8 +203,8 @@ typedef NS_ENUM(NSUInteger, Row) {
                 __block UIImage *resizedImage;
                 if (async) {
                     [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
-                        [sourceImage ys_filter:filter withCompletion:^(UIImage *filterdImage) {
-                            resizedImage = filterdImage;
+                        [sourceImage ys_filter:filter withCompletion:^(UIImage *filteredImage) {
+                            resizedImage = filteredImage;
                             *finish = YES;
                         }];
                     } timeoutInterval:DBL_MAX];

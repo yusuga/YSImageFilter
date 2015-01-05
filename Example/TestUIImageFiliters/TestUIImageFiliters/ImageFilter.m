@@ -241,8 +241,8 @@ static inline UIImage *imageFromCIImage(CIImage *ciImage, CGFloat imageScale, BO
     CIImage *ciImage = [[CIImage alloc] initWithCGImage:image.CGImage];
     CIFilter *filter = [CIFilter filterWithName:@"CISepiaTone"
                                   keysAndValues:kCIInputImageKey, ciImage, @"inputIntensity", @(intensity), nil];
-    CIImage *filterdImage = [filter outputImage];
-    return imageFromCIImage(filterdImage, image.scale, useGPU);
+    CIImage *filteredImage = [filter outputImage];
+    return imageFromCIImage(filteredImage, image.scale, useGPU);
 }
 
 + (UIImage *)sepiaInNYXImagesKitWithImage:(UIImage *)image
@@ -257,9 +257,9 @@ static inline UIImage *imageFromCIImage(CIImage *ciImage, CGFloat imageScale, BO
     [stillImageSource addTarget:filter];
     [filter useNextFrameForImageCapture];
     [stillImageSource processImage];
-    UIImage *filterdImage = [filter imageFromCurrentFramebuffer];
-    LOG_IMAGE_FILTER(@"sepiaImage: %@", NSStringFromCGSize(filterdImage.size));
-    return filterdImage;
+    UIImage *filteredImage = [filter imageFromCurrentFramebuffer];
+    LOG_IMAGE_FILTER(@"sepiaImage: %@", NSStringFromCGSize(filteredImage.size));
+    return filteredImage;
 }
 
 @end

@@ -168,8 +168,8 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
                           __block UIImage *resizedImage;
                           if (async) {
                               [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
-                                  [sourceImage ys_filter:filter withCompletion:^(UIImage *filterdImage) {
-                                      resizedImage = filterdImage;
+                                  [sourceImage ys_filter:filter withCompletion:^(UIImage *filteredImage) {
+                                      resizedImage = filteredImage;
                                       *finish = YES;
                                   }];
                               } timeoutInterval:DBL_MAX];
@@ -345,8 +345,8 @@ typedef BOOL(^QuadrangleProcess)(UIImage *image, CGSize size);
                 __block UIImage *resizedImage;
                 if (async) {
                     [[NSRunLoop currentRunLoop] performBlockAndWait:^(BOOL *finish) {
-                        [image ys_filter:filter withCompletion:^(UIImage *filterdImage) {
-                            resizedImage = filterdImage;
+                        [image ys_filter:filter withCompletion:^(UIImage *filteredImage) {
+                            resizedImage = filteredImage;
                             *finish = YES;
                         }];
                     } timeoutInterval:DBL_MAX];

@@ -28,6 +28,8 @@
     
     self.sourceImage = [ImageFilterStyleKit imageOfEarth];
     self.disableExclusiveResize = YES;
+    
+    self.targetImageView.image = self.sourceImage;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

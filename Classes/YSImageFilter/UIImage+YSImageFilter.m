@@ -323,9 +323,9 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
 {
     __strong typeof(self) strongSelf = self;
     dispatch_async([[self class] ys_filterDispatchQueue], ^{
-        UIImage *filterdImage = [strongSelf ys_filter:filter];
+        UIImage *filteredImage = [strongSelf ys_filter:filter];
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (completion) completion(filterdImage);
+            if (completion) completion(filteredImage);
         });
     });
 }
@@ -389,8 +389,8 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
                 continue;
             }
             
-            CIImage *filterdImage = [filter outputImage];
-            sourceImage = imageFromCIImage(filterdImage, sourceImage.scale, YES);
+            CIImage *filteredImage = [filter outputImage];
+            sourceImage = imageFromCIImage(filteredImage, sourceImage.scale, YES);
         }
     }
     
@@ -412,12 +412,12 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
         CGContextStrokePath(context);
     }
     
-    UIImage *filterdImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage *filteredImage = UIGraphicsGetImageFromCurrentImageContext();
     
     UIGraphicsEndImageContext();
     
-    LOG_YSIMAGE_FILTER(@"filterdImage: %@", NSStringFromCGSize(filterdImage.size));
-    return filterdImage;
+    LOG_YSIMAGE_FILTER(@"filteredImage: %@", NSStringFromCGSize(filteredImage.size));
+    return filteredImage;
 }
 
 @end

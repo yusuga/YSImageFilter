@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^YSImageFilterComletion)(UIImage *filterdImage);
+typedef void(^YSImageFilterComletion)(UIImage *filteredImage);
 
 typedef NS_ENUM(NSUInteger, YSImageFilterMask) {
     YSImageFilterMaskNone,
