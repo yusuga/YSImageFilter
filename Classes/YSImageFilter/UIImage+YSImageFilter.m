@@ -308,12 +308,38 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
 
 - (UIImage*)ys_filter:(YSImageFilter*)filter
 {
-    UIImage *sourceImage = self;
+    if (self.images) {
+        NSMutableArray *images = [NSMutableArray arrayWithCapacity:[self.images count]];
+        for (UIImage *image in self.images) {
+            [images addObject:[image ys_filter:filter]];
+        }
+        return [UIImage animatedImageWithImages:images duration:self.duration];
+    } else {
+        return [[self class] ys_filteredImageForImage:self withFilter:filter];
+    }
+}
+
+- (void)ys_filter:(YSImageFilter*)filter withCompletion:(YSImageFilterComletion)completion
+{
+    __strong typeof(self) strongSelf = self;
+    dispatch_async([[self class] ys_filterDispatchQueue], ^{
+        UIImage *filterdImage = [strongSelf ys_filter:filter];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completion) completion(filterdImage);
+        });
+    });
+}
+
+#pragma mark - Private
+
++ (UIImage*)ys_filteredImageForImage:(UIImage*)image withFilter:(YSImageFilter*)filter
+{
+    UIImage *sourceImage = image;
     CGSize sourceImageSize = sourceImage.size;
     
     LOG_YSIMAGE_FILTER(@"sourceImage.size: %@", NSStringFromCGSize(sourceImageSize));
     if (sourceImageSize.height < 1 || sourceImageSize.width < 1) {
-        return nil;
+        return image;
     }
     
     BOOL resize = NO;
@@ -392,17 +418,6 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
     
     LOG_YSIMAGE_FILTER(@"filterdImage: %@", NSStringFromCGSize(filterdImage.size));
     return filterdImage;
-}
-
-- (void)ys_filter:(YSImageFilter*)filter withCompletion:(YSImageFilterComletion)completion
-{
-    __strong typeof(self) strongSelf = self;
-    dispatch_async([[self class] ys_filterDispatchQueue], ^{
-        UIImage *filterdImage = [strongSelf ys_filter:filter];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (completion) completion(filterdImage);
-        });
-    });
 }
 
 @end
