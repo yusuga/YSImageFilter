@@ -1,6 +1,6 @@
 #YSImageFilter
 
-Allows filtering, resizing, masking.
+UIImage filter. Allows filtering, resizing, masking.
 
 #Example - TestUIImageFilters
 
