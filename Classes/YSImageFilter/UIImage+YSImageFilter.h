@@ -10,7 +10,7 @@
 
 typedef void(^YSImageFilterComletion)(UIImage *filteredImage);
 
-typedef NS_ENUM(NSUInteger, YSImageFilterMask) {
+typedef NS_ENUM(NSInteger, YSImageFilterMask) {
     YSImageFilterMaskNone,
     YSImageFilterMaskRoundedCorners,
     YSImageFilterMaskRoundedCornersIOS7RadiusRatio,
