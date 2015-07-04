@@ -292,6 +292,31 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
     return maskPath(size, mask, maskCornerRadius);
 }
 
+#pragma mark - NSCopying
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    typeof(self) obj = [[[self class] allocWithZone:zone] init];
+    if (obj) {
+        obj.size = self.size;
+        obj.maxResolution = self.maxResolution;
+        obj.quality = self.quality;
+        obj.trimToFit = self.trimToFit;
+        
+        obj.borderWidth = self.borderWidth;
+        obj.borderColor = [self.borderColor copyWithZone:zone];
+        
+        obj.mask = self.mask;
+        obj.maskCornerRadius = self.maskCornerRadius;
+        
+        obj.backgroundColor = [self.backgroundColor copyWithZone:zone];
+        
+        obj.colorEffectFilterAttributes = [[NSArray allocWithZone:zone] initWithArray:self.colorEffectFilterAttributes
+                                                                            copyItems:YES];
+    }
+    return obj;
+}
+
 @end
 
 @implementation UIImage (YSImageFilter)
@@ -322,8 +347,10 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
 - (void)ys_filter:(YSImageFilter*)filter withCompletion:(YSImageFilterComletion)completion
 {
     __strong typeof(self) strongSelf = self;
+    YSImageFilter *copiedFilter = [filter copy];
+    
     dispatch_async([[self class] ys_filterDispatchQueue], ^{
-        UIImage *filteredImage = [strongSelf ys_filter:filter];
+        UIImage *filteredImage = [strongSelf ys_filter:copiedFilter];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completion) completion(filteredImage);
         });

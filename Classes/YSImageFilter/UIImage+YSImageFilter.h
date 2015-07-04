@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, YSImageFilterMask) {
     YSImageFilterMaskCircle,
 };
 
-@interface YSImageFilter : NSObject
+@interface YSImageFilter : NSObject <NSCopying>
 
 // resize
 @property (nonatomic) CGSize size;
