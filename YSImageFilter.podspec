@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'YSImageFilter'
-  s.version = '0.1.7'
+  s.version = '0.1.8'
   s.summary = 'YSImageFilter'
   s.homepage = 'https://github.com/yusuga/YSImageFilter'
   s.license = 'MIT'
@@ -10,6 +10,5 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '6.0'
   s.source_files = 'Classes/YSImageFilter/*.{h,m}'
   s.requires_arc = true
-  
   s.compiler_flags = '-fmodules'
 end
