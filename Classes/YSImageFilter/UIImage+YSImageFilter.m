@@ -237,9 +237,9 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect, CGFloat radius)
 /* http://scriptogr.am/jimniels/post/calculate-the-border-radius-for-ios-style-icons-using-a-simple-ratio */
 static CGFloat kIOS7CornerRadiusRatio = 0.17544f;
 
-CGFloat YSImageFilterIOS7CornerRadius(CGRect rect)
+CGFloat YSImageFilterIOS7CornerRadius(CGSize size)
 {
-    return MIN(rect.size.width, rect.size.height) * kIOS7CornerRadiusRatio;
+    return MIN(size.width, size.height) * kIOS7CornerRadiusRatio;
 }
 
 static inline CGPathRef maskPath(CGSize size, YSImageFilterMask mask, CGFloat radius)
@@ -249,9 +249,9 @@ static inline CGPathRef maskPath(CGSize size, YSImageFilterMask mask, CGFloat ra
         case YSImageFilterMaskNone:
             return [UIBezierPath bezierPathWithRect:rect].CGPath;
         case YSImageFilterMaskRoundedCorners:
-            return iOS7RoundedCornersPath(rect, radius ?: YSImageFilterIOS7CornerRadius(rect));
+            return iOS7RoundedCornersPath(rect, radius ?: YSImageFilterIOS7CornerRadius(rect.size));
         case YSImageFilterMaskRoundedCornersIOS7RadiusRatio:
-            return iOS7RoundedCornersPath(rect, YSImageFilterIOS7CornerRadius(rect));
+            return iOS7RoundedCornersPath(rect, YSImageFilterIOS7CornerRadius(rect.size));
         case YSImageFilterMaskCircle:
             return [UIBezierPath bezierPathWithOvalInRect:rect].CGPath;
         default:
