@@ -237,7 +237,7 @@ static inline CGPathRef iOS7RoundedCornersPath(CGRect rect, CGFloat radius)
 /* http://scriptogr.am/jimniels/post/calculate-the-border-radius-for-ios-style-icons-using-a-simple-ratio */
 static CGFloat kIOS7CornerRadiusRatio = 0.17544f;
 
-static inline CGFloat iOS7CornerRadius(CGRect rect)
+CGFloat YSImageFilterIOS7CornerRadius(CGRect rect)
 {
     return MIN(rect.size.width, rect.size.height) * kIOS7CornerRadiusRatio;
 }
@@ -249,9 +249,9 @@ static inline CGPathRef maskPath(CGSize size, YSImageFilterMask mask, CGFloat ra
         case YSImageFilterMaskNone:
             return [UIBezierPath bezierPathWithRect:rect].CGPath;
         case YSImageFilterMaskRoundedCorners:
-            return iOS7RoundedCornersPath(rect, radius);
+            return iOS7RoundedCornersPath(rect, radius ?: YSImageFilterIOS7CornerRadius(rect));
         case YSImageFilterMaskRoundedCornersIOS7RadiusRatio:
-            return iOS7RoundedCornersPath(rect, iOS7CornerRadius(rect));
+            return iOS7RoundedCornersPath(rect, YSImageFilterIOS7CornerRadius(rect));
         case YSImageFilterMaskCircle:
             return [UIBezierPath bezierPathWithOvalInRect:rect].CGPath;
         default:
@@ -315,6 +315,16 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
                                                                             copyItems:YES];
     }
     return obj;
+}
+
+- (NSUInteger)hash
+{
+    return [[NSString stringWithFormat:@"%.0f,%.0f,%.0f,%d,%d,%.0f,%zd,%zd,%.0f.%zd", self.size.width, self.size.height, self.maxResolution, self.quality, self.trimToFit, self.borderWidth, self.borderColor.hash, self.mask, self.maskCornerRadius, self.backgroundColor.hash] hash];
+}
+
+- (BOOL)hasUniqueHash
+{
+    return self.colorEffectFilterAttributes == nil;
 }
 
 @end

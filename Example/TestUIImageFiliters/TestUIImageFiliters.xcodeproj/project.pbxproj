@@ -15,6 +15,7 @@
 		B822707919386F9F007EFE7E /* MonochromeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B822707819386F9F007EFE7E /* MonochromeViewController.m */; };
 		B82ED19318EABDA0008F9281 /* BorderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B82ED19218EABDA0008F9281 /* BorderViewController.m */; };
 		B841BD0F19567A1600AD11A5 /* ImageFilterStyleKit.m in Sources */ = {isa = PBXBuildFile; fileRef = B841BD0E19567A1600AD11A5 /* ImageFilterStyleKit.m */; };
+		B8592C8B1C0EFA1300E5464C /* YSImageFilterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B8592C8A1C0EFA1300E5464C /* YSImageFilterTests.m */; };
 		B86B5B201955E7B400FEC205 /* UIImage+YSImageFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B86B5B1F1955E7B400FEC205 /* UIImage+YSImageFilter.m */; };
 		B86B5B23195675D000FEC205 /* BackgroundColorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B86B5B22195675D000FEC205 /* BackgroundColorViewController.m */; };
 		B8814D9C18E916890041A7A5 /* MaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8814D9B18E916890041A7A5 /* MaskViewController.m */; };
@@ -67,6 +68,7 @@
 		B82ED19218EABDA0008F9281 /* BorderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BorderViewController.m; sourceTree = "<group>"; };
 		B841BD0D19567A1600AD11A5 /* ImageFilterStyleKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFilterStyleKit.h; sourceTree = "<group>"; };
 		B841BD0E19567A1600AD11A5 /* ImageFilterStyleKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageFilterStyleKit.m; sourceTree = "<group>"; };
+		B8592C8A1C0EFA1300E5464C /* YSImageFilterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YSImageFilterTests.m; sourceTree = "<group>"; };
 		B86B5B1E1955E7B400FEC205 /* UIImage+YSImageFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+YSImageFilter.h"; sourceTree = "<group>"; };
 		B86B5B1F1955E7B400FEC205 /* UIImage+YSImageFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+YSImageFilter.m"; sourceTree = "<group>"; };
 		B86B5B21195675D000FEC205 /* BackgroundColorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundColorViewController.h; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				B81B75A818E59F0700E822F0 /* TestResizePerformance.m */,
 				B81B75AD18E5E17800E822F0 /* TestSepia.m */,
 				B81B75AF18E5E3A600E822F0 /* TestSepiaPerformance.m */,
+				B8592C8A1C0EFA1300E5464C /* YSImageFilterTests.m */,
 				B8D734DD18E29DFC004850C0 /* Supporting Files */,
 			);
 			path = TestUIImageFilitersTests;
@@ -285,6 +288,7 @@
 				B8D734B118E29DFC004850C0 /* Frameworks */,
 				B8D734B218E29DFC004850C0 /* Resources */,
 				549390349A724783B3EFE3EB /* Copy Pods Resources */,
+				F3B9A429B7E06D15A9BDB194 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -319,7 +323,7 @@
 		B8D734AC18E29DFC004850C0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Yu Sugawara";
 				TargetAttributes = {
 					B8D734D418E29DFC004850C0 = {
@@ -400,6 +404,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		F3B9A429B7E06D15A9BDB194 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -433,6 +452,7 @@
 				B8EADF3718E48AD10073E3EE /* TestUtility.m in Sources */,
 				B81B75AE18E5E17800E822F0 /* TestSepia.m in Sources */,
 				B8CE5CAD18E485F100268B7C /* Utility.m in Sources */,
+				B8592C8B1C0EFA1300E5464C /* YSImageFilterTests.m in Sources */,
 				B81B75A918E59F0700E822F0 /* TestResizePerformance.m in Sources */,
 				B8CE5CAA18E4849C00268B7C /* TestResizeAndMask.m in Sources */,
 				B81B75B018E5E3A700E822F0 /* TestSepiaPerformance.m in Sources */,
@@ -495,6 +515,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -579,6 +600,7 @@
 					QuartzCore,
 					"$(inherited)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.YuSugawara.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -616,6 +638,7 @@
 					QuartzCore,
 					"$(inherited)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.YuSugawara.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -642,6 +665,7 @@
 					"${SRCROOT}/Pods/Headers/**",
 				);
 				INFOPLIST_FILE = "TestUIImageFilitersTests/TestUIImageFilitersTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.YuSugawara.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -665,6 +689,7 @@
 					"${SRCROOT}/Pods/Headers/**",
 				);
 				INFOPLIST_FILE = "TestUIImageFilitersTests/TestUIImageFilitersTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.YuSugawara.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;

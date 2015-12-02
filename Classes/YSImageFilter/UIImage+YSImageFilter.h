@@ -17,6 +17,8 @@ typedef NS_ENUM(NSInteger, YSImageFilterMask) {
     YSImageFilterMaskCircle,
 };
 
+extern CGFloat YSImageFilterIOS7CornerRadius(CGRect rect);
+
 @interface YSImageFilter : NSObject <NSCopying>
 
 // resize
@@ -47,6 +49,10 @@ typedef NS_ENUM(NSInteger, YSImageFilterMask) {
 + (CGPathRef)maskPathOfSize:(CGSize)size
                        mask:(YSImageFilterMask)mask
            maskCornerRadius:(CGFloat)maskCornerRadius;
+
+// hash
+- (NSUInteger)hash;
+- (BOOL)hasUniqueHash;
 
 @end
 
