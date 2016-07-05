@@ -331,16 +331,6 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
 
 @implementation UIImage (YSImageFilter)
 
-+ (dispatch_queue_t)ys_filterDispatchQueue
-{
-    static dispatch_queue_t s_queue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        s_queue = dispatch_queue_create("jp.YuSugawara.YSImageFilter.queue", NULL);
-    });
-    return s_queue;
-}
-
 - (UIImage*)ys_filter:(YSImageFilter*)filter
 {
     if (self.images) {
@@ -359,7 +349,7 @@ static inline void addMaskPath(CGContextRef context, CGSize size, CGPathRef mask
     __strong typeof(self) strongSelf = self;
     YSImageFilter *copiedFilter = [filter copy];
     
-    dispatch_async([[self class] ys_filterDispatchQueue], ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         UIImage *filteredImage = [strongSelf ys_filter:copiedFilter];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completion) completion(filteredImage);

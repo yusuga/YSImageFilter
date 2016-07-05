@@ -2,8 +2,10 @@ PODS:
   - GPUImage (0.1.7)
   - NSRunLoop+PerformBlock (0.2.0)
   - NYXImagesKit (2.3)
+  - YSNSFoundationAdditions (0.0.20)
   - YSProcessTimer (0.0.10)
-  - YSUIKitAdditions (0.0.24)
+  - YSUIKitAdditions (0.0.31):
+    - YSNSFoundationAdditions
 
 DEPENDENCIES:
   - GPUImage
@@ -16,7 +18,10 @@ SPEC CHECKSUMS:
   GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
   NSRunLoop+PerformBlock: 7ff5674d72dc5da5d31aeb1901286ae126684896
   NYXImagesKit: 8163e3335a40eaa173ca5bbbf81fafb57d3947eb
+  YSNSFoundationAdditions: 39bd414117baf4629fb616f325cfcc2bb80367b0
   YSProcessTimer: a2f0956ee12e5f9af4c211326e8d864a23ddfdb7
-  YSUIKitAdditions: be64f8be0de4237ce24f2e293f97be61cb391df1
+  YSUIKitAdditions: e4d9317d04e520f1a5f882237b528fff3677631a
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: c3fd5b6a158754f078488a86313eba6de8213e19
+
+COCOAPODS: 1.0.1
